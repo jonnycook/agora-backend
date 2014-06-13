@@ -10,6 +10,9 @@ if ($userId != null) {
 	if (ENV == 'LOCAL_DEV') {
 		$server = 'localhost';
 	}
+	else if (ENV == 'LINODE_DEV') {
+		$server = '66.228.54.96';
+	}
 	else {
 		$result = mysqli_query($mysqli, 'SELECT ip FROM servers WHERE type = "update"');
 		$updaterServers = array();
