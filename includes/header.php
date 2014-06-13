@@ -27,9 +27,16 @@ switch (ENV) {
 		define('MONGO_DB', 'agora');
 		break;
 
+	// case 'LINODE_DEV':
+	// 	$mysqli = mysqli_connect('127.0.0.1', 'root', 'ghijkk56k');
+	// 	mysqli_select_db($mysqli, 'agora_dev');
+	// 	define('SHARED_PATH', '/var/www/shared/');
+	// 	define('USE_RIAK', false);
+	// 	define('MONGO_DB', 'agora_dev');
+	// 	break;
 	case 'LINODE_DEV':
 		$mysqli = mysqli_connect('127.0.0.1', 'root', 'ghijkk56k');
-		mysqli_select_db($mysqli, 'agora_dev');
+		mysqli_select_db($mysqli, 'agora');
 		define('SHARED_PATH', '/var/www/shared/');
 		define('USE_RIAK', false);
 		define('MONGO_DB', 'agora_dev');
