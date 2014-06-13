@@ -1,0 +1,1 @@
+ssh -t root@agora.sh "cd /var/www/dev.ext.agora.sh/public_html/; git pull"

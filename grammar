@@ -1,0 +1,63 @@
+<thing>
+<activity>
+<product>
+
+<name>
+
+<occasion> ::= ([<number>[th|st|nd]] "birthday") | "christmas" | "valentine's day" | ([<number>[th|st|nd]] "anniversary") | "easter" | "wedding"
+
+<skill term> ::= ("beginner" | "novice" | "expert" | "amateur" | "newbie")[s]
+	
+<age> ::= <number> year[s] old
+
+<parent> ::= "parent" | "father" | "dad" | "mother" | "mom"
+<sibling> ::= "sibling" | "brother" | "sister"
+<child> ::= "child" | "son" | "daughter"
+<grandparent> ::= "grandparent" | "grandmother" | "grandfather"
+
+
+<grandparent expression> ::= {"great"} <grandparent>
+
+<sibling modifier> ::= "little" | "younger" | "big" | "older"
+<sibling expression> ::= <sibling> | <sibling modifier> <sibling> | <sibling> (that is|that's) <sibling modifier>
+
+<relative> ::= <parent> | <sibling expression> | <child> | <grandparent expression> | "aunt" | "uncle" | "cousin" | "niece" | "nephew"
+
+<spouse> ::= "spouse" | "husband" | "wife"
+
+<person relationship> ::= <relative>-in-law | <relative> | <spouse> | "friend" | "coworker" | "boss" | "girlfriend" | "boyfriend" | "him" | "her" | "fiance"
+
+<sub person expression> ::= <person relationship> | <name>
+
+<person expression> ::= [my] (<age> <sub person expression> | <sub person expression> that is <age> | <sub person expression>)
+<person expression:possessive> ::= [my] (<age> <sub person expression>[[']s] | <sub person expression> that is <age> | <sub person expression>[[']s])
+
+
+<activity modifer> ::= <thing> | <activity property>
+<activity expression> ::= <activity> | <activity modifier> <activity> | <activity> in <activity modifier>
+
+
+<occasion expression> ::= <person expression:possessive> <occasion> | <occasion> for <person expression> | <occasion>
+
+<gift term> ::= "gift" | "present"
+<gift expression> ::= <gift term> for <occasion expression> | <occasion expression> <gift term> | <gift term>
+
+
+
+#<product property statement> ::= <product property value> | <product property
+#<product property expression> ::= <product property statement> | {<product property statement>, } and <product property statement>
+
+<product modifier> ::= <skill term> | <thing> | <activity expression>
+
+
+
+<product expression> ::= ["good"|"best"] (<product> | <product modifier> <product> | <product> for <product modifier> | <product property expression> <product> | <product> (that is|that are) <product property expression> | <gift expression>)
+
+<descriptor> ::= <product expression> [<for person>]
+
+<full gift expression> ::= <gift expression> [<for person>]
+<full occasion expression> ::= [for] <occasion expression>
+<full skill expression> ::= [for] <skill term>
+
+<for person> ::= for <person expression>
+

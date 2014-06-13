@@ -1,0 +1,39 @@
+#chats {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+}
+#chats .chat {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 250px;
+}
+#chats .chat .user {
+  font-weight: bold;
+  font-size: 17px;
+}
+#chats .chat .message .sender {
+  font-weight: bold;
+  margin-right: 3px;
+}
+#chats .chat .message .sender:after {
+  content: ':';
+}
+#chats .wrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20px;
+  bottom: 20px;
+  overflow: auto;
+}
+#chats .sendMessage {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  position: absolute;
+}

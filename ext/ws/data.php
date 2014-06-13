@@ -1,0 +1,151 @@
+<?php
+
+require_once('header.php');
+
+// $clientId = $_GET['clientId'];
+$userId = mysqli_real_escape_string($mysqli, $_GET['userId']);
+
+// if (!preg_match('/^[A-z0-9]*$/', $clientId)) {
+// 	echo 'invalid client id';
+// 	exit;
+// }
+
+// $userId = getUserId($clientId);
+
+$db = makeDb($userId, null);
+$db->queryByUserId = false;
+
+function getCollaborators($userId, $object) {
+	global $mysqli;
+	$result = mysqli_query($mysqli, "SELECT * FROM shared WHERE user_id = $userId && object = '$object'");
+	$collaborators = array();
+	while ($row = mysqli_fetch_assoc($result)) {
+		$collaborators["G$row[user_id].$row[object].$row[with_user_id]"] = array(
+			'object_user_id' => $row['user_id'],
+			'object' => $row['object'],
+			'user_id' => $row['with_user_id'],
+		);
+
+		$collaborators["G$row[user_id].$row[object].$row[user_id]"] = array(
+			'object_user_id' => $row['user_id'],
+			'object' => $row['object'],
+			'user_id' => $row['user_id'],
+			// 'role' => 'owner',
+		);
+	}
+	return $collaborators;
+}
+
+function addActivity(&$data, $row) {
+		$id = md5("$row[user_id]$row[timestamp]$row[generator_id]$row[object_type]$row[object_id]$row[type]$row[args]");
+		$data["G$id"] = array(
+			'user_id' => "G$row[user_id]",
+			'timestamp' => $row['timestamp'],
+			'generator_id' => "G$row[generator_id]",
+			'object_type' => $row['object_type'],
+			'object_id' => $row['object_id'],
+			'type' => $row['type'],
+			'args' => $row['args'],
+		);
+}
+
+function getAllActivity() {
+	global $mysqli, $userId;
+	$result = mysqli_query($mysqli, "SELECT * FROM activity WHERE user_id = $userId");
+	$data = array();
+	while ($row = mysqli_fetch_assoc($result)) {
+		addActivity($data, $row);
+	}
+	return $data;
+}
+
+$object = $_GET['object'];
+if ($object == '*') {
+	$data = $db->data();
+	$result = mysqli_query($mysqli, "SELECT * FROM shared WHERE user_id = $userId || with_user_id = $userId");
+	while ($row = mysqli_fetch_assoc($result)) {
+		$userResult = mysqli_query($mysqli, "SELECT * FROM m_users WHERE id IN ($row[user_id], $row[with_user_id])");
+		while ($userRow = mysqli_fetch_assoc($userResult)) {
+			if ($userRow['id'] == $row['user_id']) {
+				$userName = $userRow['name'] ? $userRow['name'] : $userRow['email'];
+			}
+			else if ($userRow['id'] == $row['with_user_id']) {
+				$withUserName = $userRow['name'] ? $userRow['name'] : $userRow['email'];
+			}
+		}
+		$data['shared_objects']["G$row[id]"] = array(
+			'user_id' => "G$row[user_id]",
+			'with_user_id' => "G$row[with_user_id]",
+			'title' => $row['title'],
+			'object' => $row['object'],
+			'user_name' => $userName,
+			'with_user_name' => $withUserName,
+		);
+
+
+		if ($_GET['collaborators']) {
+			if ($row['user_id'] == $userId) {
+				$data['collaborators']["G$row[user_id].$row[object].$row[with_user_id]"] = array(
+					'object_user_id' => $row['user_id'],
+					'object' => $row['object'],
+					'user_id' => $row['with_user_id'],
+				);
+
+				$data['collaborators']["G$row[user_id].$row[object].$row[user_id]"] = array(
+					'object_user_id' => $row['user_id'],
+					'object' => $row['object'],
+					'user_id' => $row['user_id'],
+					// 'role' => 'owner',
+				);
+			}
+		}
+	}
+
+	$data['activity'] = getAllActivity();
+}
+else if ($object == '/') {
+	$data = $db->prepareData($db->storage->getData(array(
+		'elements' => 'Root'
+	)));
+	if ($_GET['collaborators']) {
+		$data['collaborators'] = getCollaborators($userId, $object);
+	}
+	$data['activity'] = getAllActivity();
+}
+else if ($object == '@') {
+	$data = $db->prepareData($db->storage->getData(array(
+		'records' => array('User' => array($userId))
+	)));
+}
+else {
+	list($table, $id) = explode('.', $object);
+	if ($table == 'decisions') $model = 'Decision';
+	else if ($table == 'lists') $model = 'List';
+	else if ($table == 'bundles') $model = 'Bundle';
+	else throw new Exception("invalid object $object");
+
+	$data = $db->storage->getData(array(
+		'records' => array($model => array($id))
+	));
+
+	if ($_GET['claim']) {
+		foreach ($data as $table => $records) {
+			mysqli_query($mysqli, "UPDATE m_$table SET user_id = $userId WHERE id IN (" . implode(',', array_keys($records)) . ')');
+		}
+	}
+
+	$data = $db->prepareData($data);
+
+	if ($_GET['collaborators']) {
+		$data['collaborators'] = getCollaborators($userId, $object);
+	}
+	$result = mysqli_query($mysqli, "SELECT * FROM activity WHERE user_id = $userId");
+	while ($row = mysqli_fetch_assoc($result)) {
+		$table = modelNameToTableName($row['object_type']);
+		if ($data[$table][$row['object_id']]) {
+			addActivity($data['activity'], $row);
+		}
+	}
+}
+
+echo json_encode($data);
