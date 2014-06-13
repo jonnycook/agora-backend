@@ -253,7 +253,7 @@ class ProductsTableHandler extends SqlTableHandler {
 	}
 
 	public static function storageSiteIdToModelSiteName($storageSiteId) {
-		if (ENV == 'LOCAL_DEV') {
+		if (ENV == 'LOCAL_DEV' || ENV == 'LINODE_DEV') {
 			return $storageSiteId;
 		}
 		else {
