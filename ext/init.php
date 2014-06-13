@@ -243,7 +243,7 @@ class ProductsTableHandler extends SqlTableHandler {
 			return null;
 		}
 		else {
-			if (ENV == 'LOCAL_DEV') {
+			if (ENV == 'LOCAL_DEV' || ENV == 'LINODE_DEV') {
 				return $modelSiteName;
 			}
 			else {
