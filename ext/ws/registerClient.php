@@ -8,10 +8,10 @@ if ($userId != null) {
 	$extVersion = mysqli_real_escape_string($mysqli, $_GET['extVersion']);
 
 	if (ENV == 'LOCAL_DEV') {
-		$server = 'localhost';
+		$server = 'localhost:8080';
 	}
 	else if (ENV == 'LINODE_DEV') {
-		$server = '66.228.54.96';
+		$server = '66.228.54.96:8081';
 	}
 	else {
 		$result = mysqli_query($mysqli, 'SELECT ip FROM servers WHERE type = "update"');
