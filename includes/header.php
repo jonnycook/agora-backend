@@ -35,7 +35,7 @@ switch (ENV) {
 	// 	define('MONGO_DB', 'agora_dev');
 	// 	break;
 	case 'LINODE_DEV':
-		$mysqli = mysqli_connect('127.0.0.1', 'root', 'ghijkk56k');
+		$mysqli = mysqli_connect('127.0.0.1', 'root', 'ghijkk56k') or die(mysqli_error($mysqli));
 		mysqli_select_db($mysqli, 'agora');
 		define('SHARED_PATH', '/var/www/shared/');
 		define('USE_RIAK', false);
