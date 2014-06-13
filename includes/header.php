@@ -40,6 +40,7 @@ switch (ENV) {
 		define('SHARED_PATH', '/var/www/shared/');
 		define('USE_RIAK', false);
 		define('MONGO_DB', 'agora_dev');
+		// define('COOKIE_DOMAIN', 'agora_dev');
 		break;
 		
 	case 'MESSAGE_SERVER':
