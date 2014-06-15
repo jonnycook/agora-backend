@@ -41,13 +41,14 @@ foreach ($data['user_products'] as $row) {
 	$productIds[] = $row['product_id'];
 }
 
-$result = mysqli_query($mysqli, 'SELECT * FROM m_products WHERE id IN (' . implode(', ', $productIds) . ')');
-while ($row = mysqli_fetch_assoc($result)) {
-	$data['m_products'][] = $row;
+if ($productIds) {
+	$result = mysqli_query($mysqli, 'SELECT * FROM m_products WHERE id IN (' . implode(', ', $productIds) . ')');
+	while ($row = mysqli_fetch_assoc($result)) {
+		$data['m_products'][] = $row;
+	}
 }
-
 $snapshotsCol = mongoDb()->snapshots;
-$snapshotsCol->insert(array(
+var_dump($snapshotsCol->insert(array(
 	'_id' => array('userId' => $userId, 'id' => $_GET['id']),
 	'data' => $data
-));
+)));

@@ -49,7 +49,7 @@ switch (ENV) {
 		mysqli_select_db($mysqli, 'agora');
 		define('SHARED_PATH', '/var/www/shared/');
 		define('USE_RIAK', false);
-		define('MONGO_DB', 'agore');
+		define('MONGO_DB', 'agora');
 		// define('COOKIE_DOMAIN', 'agora_dev');
 		break;
 		
