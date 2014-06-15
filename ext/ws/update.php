@@ -15,19 +15,23 @@ if ($clientId != 'Carl Sagan') {
 		exit;
 	}
 
+	
 	if (!preg_match('/^\d+$/', $updateToken)) {
 		echo 'invalid update token';
 		exit;
 	}
 
 	$clientUserId = getUserId($clientId);
-	$row = mysqli_fetch_row(mysqli_query($mysqli, "SELECT 1 FROM update_tokens WHERE user_id = $clientUserId && id = $updateToken"));
-	if (!$row) {
-		echo json_encode(array(
-			'status' => 'invalidUpdateToken',
-			'updateToken' => newUpdateToken($clientUserId, $clientId)
-		));
-		exit;
+	
+	if (ENV != 'TEST') {
+		$row = mysqli_fetch_row(mysqli_query($mysqli, "SELECT 1 FROM update_tokens WHERE user_id = $clientUserId && id = $updateToken"));
+		if (!$row) {
+			echo json_encode(array(
+				'status' => 'invalidUpdateToken',
+				'updateToken' => newUpdateToken($clientUserId, $clientId)
+			));
+			exit;
+		}
 	}
 }
 
@@ -84,8 +88,6 @@ if ($activity) {
 
 
 		$globalId = 'G' . md5("$userId$entry[timestamp]$clientUserId$entry[object_type]$entry[object_id]$entry[type]$args");
-
-
 
 		$mapping['activity'][$id] = $globalId;
 

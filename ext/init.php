@@ -243,7 +243,7 @@ class ProductsTableHandler extends SqlTableHandler {
 			return null;
 		}
 		else {
-			if (ENV == 'LOCAL_DEV' || ENV == 'LINODE_DEV') {
+			if (ENV == 'LOCAL_DEV' || ENV == 'LINODE_DEV' || ENV == 'TEST') {
 				return $modelSiteName;
 			}
 			else {
@@ -253,7 +253,7 @@ class ProductsTableHandler extends SqlTableHandler {
 	}
 
 	public static function storageSiteIdToModelSiteName($storageSiteId) {
-		if (ENV == 'LOCAL_DEV' || ENV == 'LINODE_DEV') {
+		if (ENV == 'LOCAL_DEV' || ENV == 'LINODE_DEV' || ENV == 'TEST') {
 			return $storageSiteId;
 		}
 		else {

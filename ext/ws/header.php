@@ -127,4 +127,5 @@ function insert($values, $table) {
 }
 
 
-dbErrors();
+if (ENV != 'TEST')
+	dbErrors();
