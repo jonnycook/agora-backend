@@ -23,17 +23,23 @@ $tables = array(
 	'user_products',
 	'm_products',
 	'clients',
+	'm_users',
 );
+
+$snapshotsCol = mongoDb()->snapshots;
+$snapshot = $snapshotsCol->findOne(array('_id' => intval($_GET['id'])));
+
 
 mysqli_query($mysqli, 'TRUNCATE TABLE m_users');
 foreach ($tables as $table) {
 	mysqli_query($mysqli, "TRUNCATE TABLE $table");
+	if ($ai = $snapshot['autoIncrement'][$table]) {
+		mysqli_query($mysqli, "ALTER TABLE `$table` AUTO_INCREMENT=$ai");
+	}
 }
 
-$snapshotsCol = mongoDb()->snapshots;
-$snapshot = $snapshotsCol->findOne(array('_id' => array('userId' => $userId, 'id' => $_GET['id'])));
 mysqli_query($mysqli, 'SET SESSION sql_mode = "ANSI"') or die(mysqli_error($mysqli));
-var_dump($snapshot);
+
 foreach ($snapshot['data'] as $table => $rows) {
 	foreach ($rows as $row) {
 		$set = array();
@@ -42,4 +48,9 @@ foreach ($snapshot['data'] as $table => $rows) {
 		}
 		mysqli_query($mysqli, "INSERT INTO $table SET " . implode(', ', $set)) or die(mysqli_error($mysqli));
 	}
+}
+
+
+foreach ($snapshot['clients'] as $clientId => $userId) {
+	mysqli_query($mysqli, "INSERT INTO clients SET user_id = $userId, client_id = '$clientId', created_at = UTC_TIMESTAMP(), last_seen_at = UTC_TIMESTAMP(), version = ''");
 }

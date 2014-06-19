@@ -25,6 +25,7 @@ switch (ENV) {
 		define('SHARED_PATH', '/web/agora-shared/');
 		define('USE_RIAK', false);
 		define('MONGO_DB', 'agora');
+		define('SITE_DOMAIN', 'agora.dev');
 		break;
 
 
@@ -65,6 +66,8 @@ switch (ENV) {
 		define('USE_RIAK', true);
 		define('RIAK_HOST', '50.116.31.117');
 		define('MONGO_DB', 'agora_prod');
+		define('SITE_DOMAIN', 'agora.sh');
+
 		break;
 }
 

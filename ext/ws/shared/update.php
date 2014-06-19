@@ -2,18 +2,19 @@
 
 require_once('header.php');
 
-$userId = userId();
+$userId = $_GET['userId'];
 $object = mysqli_real_escape_string($mysqli, $_POST['object']);
 
 if ($object != '/') {
 	list($table, $id) = explode('.', $object);
 	if ($table == 'decisions') {
 		$title = '"' . mysqli_real_escape_string($mysqli, $_POST['title']) . '"';
+
 		// mysqli_query($mysqli, "UPDATE m_decisions SET share_title = '$title' WHERE id = $id");
-		mysqli_query($mysqli, "UPDATE shared SET title = '$title' WHERE object = '$object' && user_id = $userId");
+		mysqli_query($mysqli, "UPDATE shared SET title = $title WHERE object = '$object' && user_id = $userId");
 
 		sendUpdate($userId, array(
-			'decisions' => array("G$id" => array('share_title' => $_POST['title']))
+			'decisions' => array("G$id" => array('share_title' => $_POST['title'], 'share_message' => $_POST['message']))
 		));
 
 		$result = mysqli_query($mysqli, "SELECT * FROM shared WHERE object = '$object' && user_id = $userId");

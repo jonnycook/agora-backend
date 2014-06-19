@@ -41,6 +41,8 @@ $db->queryByUserId = true;
 $requestChanges = json_decode($_POST['changes'], true);
 $activity = $requestChanges['activity'];
 unset($requestChanges['activity']);
+$sharedObjects = $requestChanges['shared_objects'];
+unset($requestChanges['shared_objects']);
 $db->execute((array)$requestChanges);
 
 if ($clientId != 'Carl Sagan') {
@@ -94,6 +96,17 @@ if ($activity) {
 		$entry += array('args' => $args, 'user_id' => $userId, 'generator_id' => $clientUserId, 'object_id' => $objectId);
 
 		$responseChanges['activity'][$globalId] = $entry;
+	}
+}
+
+if ($sharedObjects && $clientUserId == $userId) {
+	foreach ($sharedObjects as $id => $changes) {
+		if (isset($changes['seen'])) {
+			$seen = $changes['seen'] ? 1 : 0;
+			$saneId = substr($id, 1);
+			mysqli_query($mysqli, "UPDATE shared SET seen = $seen WHERE id = $saneId && with_user_id = $userId") or die(mysqli_error($mysqli));
+			$responseChanges['shared_objects'][$id] = array('seen' => $changes['seen']);
+		}
 	}
 }
 

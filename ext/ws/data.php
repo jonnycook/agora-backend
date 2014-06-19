@@ -78,6 +78,7 @@ if ($object == '*') {
 			'with_user_id' => "G$row[with_user_id]",
 			'title' => $row['title'],
 			'object' => $row['object'],
+			'seen' => $row['seen'],
 			'user_name' => $userName,
 			'with_user_name' => $withUserName,
 		);

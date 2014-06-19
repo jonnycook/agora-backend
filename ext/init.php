@@ -356,7 +356,7 @@ class ProductsTableHandler extends SqlTableHandler {
 			'title' => $record['title'] ? $record['title'] : $storageRecord['title'],
 			'price' => $record['price'] ? $record['price'] : $storageRecord['price'],
 			'rating' => $record['rating'] ? $record['rating'] : $storageRecord['rating'],
-			'status' => $record['status'],
+			'status' => $record['status'] ? $record['status'] : $storageRecord['status'],
 			'ratingCount' => $record['rating_count'] ? $record['rating_count'] : $storageRecord['rating_count'],
 			'image' => $record['image_url'] ? $record['image_url'] : $storageRecord['image_url'],
 			'last_scraped_at' => $record['last_scraped_at'],
@@ -418,6 +418,7 @@ class ProductsTableHandler extends SqlTableHandler {
 				'rating' => $storageRecord['rating'],
 				'rating_count' => $storageRecord['rating_count'],
 				'price' => $storageRecord['price'],
+				'status' => $storageRecord['status'],
 			);
 			$setQueryPart = static::setQueryPart($values);
 			$this->query("INSERT INTO `m_$this->storageTable` SET $setQueryPart");
@@ -469,6 +470,9 @@ class ProductsTableHandler extends SqlTableHandler {
 			}
 			if ($values['price']) {
 				$sql[] = "price = IFNULL(price, '". mysqli_real_escape_string($mysqli, $values['price']) . "')";
+			}
+			if ($values['status']) {
+				$sql[] = "status = IFNULL(status, '". mysqli_real_escape_string($mysqli, $values['status']) . "')";
 			}
 			if ($sql) {
 				$this->query("UPDATE `m_$this->storageTable` SET " . implode(',', $sql) . " WHERE $idQueryPart");
@@ -548,6 +552,7 @@ class UsersTableHandler extends SqlTableHandler {
 	public function mapStorageRecordToModelRecord($storageTable, $storageRecord, $modelId) {
 		return array(
 			'name' => $storageRecord['name'],
+			'tutorials' => $storageRecord['tutorials'],
 			'user_colors' => $storageRecord['user_colors'],
 		);
 	}
@@ -789,6 +794,7 @@ class DecisionsTableHandler extends SqlTableHandler {
 			// 'dismissal_list_id' => $this->db->tableHandler('lists')->storageLocationToModelId('lists', $storageRecord['dismissal_list_id']),
 			'display_options' => $storageRecord['display_options'],
 			'share_title' => $storageRecord['share_title'],
+			'share_message' => $storageRecord['share_message'],
 			'shared' => $storageRecord['shared'],
 			'creator_id' => $storageRecord['creator_id'],
 			// 'element_type' => $storageRecord['element_type'],
@@ -1108,25 +1114,27 @@ class Storage extends DBStorage {
 		}
 		unset($ids);
 
-		foreach (array('data', 'feelings', 'arguments') as $table) {
-			$query = [];
+		if ($args['auxiliary']) {
+			foreach (array('data', 'feelings', 'arguments') as $table) {
+				$query = [];
 
-			foreach ($allRecordsQuery as $modelName => $ids) {
-				foreach ($ids as $id) {
-					$query[] = "element_type = '$modelName' && element_id = '$id'";
+				foreach ($allRecordsQuery as $modelName => $ids) {
+					foreach ($ids as $id) {
+						$query[] = "element_type = '$modelName' && element_id = '$id'";
+					}
 				}
-			}
 
-			// var_dump($query);
+				// var_dump($query);
 
-			if ($query) {
-				$query = '(' . implode(') || (', $query) . ')';
+				if ($query) {
+					$query = '(' . implode(') || (', $query) . ')';
 
-				$result = $this->query("SELECT * FROM m_$table WHERE $query");
-				$tableHandler = $this->tableHandler($table);
-				while ($row = mysqli_fetch_assoc($result)) {
-					$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
-					$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
+					$result = $this->query("SELECT * FROM m_$table WHERE $query");
+					$tableHandler = $this->tableHandler($table);
+					while ($row = mysqli_fetch_assoc($result)) {
+						$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
+						$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
+					}
 				}
 			}
 		}
@@ -1147,7 +1155,8 @@ class Storage extends DBStorage {
 		return $this->getData(array(
 			'elements' => 'Root',
 			'records' => array('User' => array($this->userId)),
-			'products' => true
+			'products' => true,
+			'auxiliary' => true
 		));
 
 		// $modelRecords = array();

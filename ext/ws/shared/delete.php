@@ -45,7 +45,7 @@ if ($_POST['userId'] && $_POST['object']) {
 	}
 }
 else {
-	$userId = userId();
+	$userId = $_GET['userId'];
 	$id = mysqli_real_escape_string($mysqli, $_POST['id']);
 
 	$shared = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM shared WHERE id = $id"));

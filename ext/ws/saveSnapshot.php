@@ -19,36 +19,30 @@ $tables = array(
 	'm_sessions',
 	'm_session_elements',
 	'user_products',
+	'm_products',
+	'm_users',
 	'clients',
 );
 $data = array();
 
-
-$result = mysqli_query($mysqli, "SELECT * FROM m_users WHERE id = $userId") or die(mysqli_error($mysqli));
-while ($row = mysqli_fetch_assoc($result)) {
-	$data['m_users'][] = $row;
-}
-
 foreach ($tables as $table) {
-	$result = mysqli_query($mysqli, "SELECT * FROM $table WHERE user_id = $userId") or die(mysqli_error($mysqli));
+	$result = mysqli_query($mysqli, "SELECT * FROM $table") or die(mysqli_error($mysqli));
 	while ($row = mysqli_fetch_assoc($result)) {
 		$data[$table][] = $row;
 	}
+
+	$row = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT `AUTO_INCREMENT`
+		FROM  INFORMATION_SCHEMA.TABLES
+		WHERE TABLE_SCHEMA = DATABASE()
+		AND   TABLE_NAME   = '$table'"));
+
+	$autoIncrement[$table] = $row['AUTO_INCREMENT'];
 }
 
-$productIds = array();
-foreach ($data['user_products'] as $row) {
-	$productIds[] = $row['product_id'];
-}
 
-if ($productIds) {
-	$result = mysqli_query($mysqli, 'SELECT * FROM m_products WHERE id IN (' . implode(', ', $productIds) . ')');
-	while ($row = mysqli_fetch_assoc($result)) {
-		$data['m_products'][] = $row;
-	}
-}
 $snapshotsCol = mongoDb()->snapshots;
-var_dump($snapshotsCol->insert(array(
-	'_id' => array('userId' => $userId, 'id' => $_GET['id']),
-	'data' => $data
-)));
+$snapshotsCol->insert(array(
+	'_id' => intval($_GET['id']),
+	'data' => $data,
+	'autoIncrement' => $autoIncrement
+));

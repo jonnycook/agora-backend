@@ -127,5 +127,5 @@ function insert($values, $table) {
 }
 
 
-if (ENV != 'TEST')
-	dbErrors();
+// if (ENV != 'TEST' && ENV != 'LOCAL_DEV')
+// 	dbErrors();
