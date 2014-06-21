@@ -1129,7 +1129,7 @@ class Storage extends DBStorage {
 
 				foreach ($allRecordsQuery as $modelName => $ids) {
 					foreach ($ids as $id) {
-						$query[] = "element_type = '$modelName' && element_id = '$id'";
+						$query[] = "element_type = '$modelName' && element_id = '$id' && user_id = $this->userId";
 					}
 				}
 
