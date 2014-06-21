@@ -4,7 +4,7 @@ require_once('includes/header.php');
 
 $result = mysqli_query($mysqli, "SELECT id FROM m_users");
 while ($row = mysqli_fetch_assoc($result)) {
-	mysqli_query($mysqli, "INSERT INTO m_belts WHERE user_id = $row[id], creator_id + $row[id]");
+	mysqli_query($mysqli, "INSERT INTO m_belts WHERE user_id = $row[id], creator_id = $row[id]");
 	$beltId = mysqli_insert_id($mysqli);
 
 	$rootElementsResult = mysqli_query($mysqli, "SELECT * FROM m_root_elements WHERE user_id = $row[id]");
