@@ -42,6 +42,12 @@ if ($_POST['userId'] && $_POST['object']) {
 				'decisions' => array("G$objId" => array('shared' => 0))
 			));
 		}
+		else if ($table == 'belts') {
+			mysqli_query($mysqli, "UPDATE m_belts SET shared = 0 WHERE id = $objId");
+			sendUpdate($userId, array(
+				'belts' => array("G$objId" => array('shared' => 0))
+			));
+		}
 	}
 }
 else {
@@ -71,6 +77,14 @@ else {
 				mysqli_query($mysqli, "UPDATE m_decisions SET shared = 0 WHERE id = $objId");
 				sendUpdate($userId, array(
 					'decisions' => array("G$objId" => array('shared' => 0))
+				));
+			}
+		}
+		else if ($table == 'belts') {
+			if ($row[0] == 1) {
+				mysqli_query($mysqli, "UPDATE m_belts SET shared = 0 WHERE id = $objId");
+				sendUpdate($userId, array(
+					'belts' => array("G$objId" => array('shared' => 0))
 				));
 			}
 		}

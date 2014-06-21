@@ -9,6 +9,8 @@ $userId = $_GET['userId'];
 $tables = array(
 	'm_bundles',
 	'm_bundle_elements',
+	'm_belts',
+	'm_belt_elements',
 	'm_data',
 	'm_decisions',
 	'm_decision_elements',

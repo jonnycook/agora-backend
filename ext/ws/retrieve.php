@@ -12,7 +12,7 @@ $data = array();
 
 foreach ($toRetrieve as $table => $ids) {
 	if ($table == 'products' || $table == 'product_variants') {
-		$records = $db->storage->tableHandler($table)->retrieveModelRecordsFromStorageForModelIds($ids);
+		$records = $db->storage->tableHandler($table)->retrieveModelRecordsFromStorageForModelIds(array_map(function($id) {return substr($id, 1);}, $ids));
 		foreach ($records as $id => $record) {
 			$data[$table]["G$id"] = $record;
 		}

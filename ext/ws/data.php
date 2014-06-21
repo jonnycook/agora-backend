@@ -121,6 +121,7 @@ else if ($object == '@') {
 else {
 	list($table, $id) = explode('.', $object);
 	if ($table == 'decisions') $model = 'Decision';
+	else if ($table == 'belts') $model = 'Belt';
 	else if ($table == 'lists') $model = 'List';
 	else if ($table == 'bundles') $model = 'Bundle';
 	else throw new Exception("invalid object $object");

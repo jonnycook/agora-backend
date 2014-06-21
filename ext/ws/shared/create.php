@@ -16,6 +16,10 @@ else {
 	$withUser = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_users WHERE email = '$with'"));
 }
 if ($withUser) {
+	$count = mysqli_fetch_row(mysqli_query($mysqli, "SELECT COUNT(*) FROM shared WHERE object = '$object' && user_id = $userId && with_user_id = $withUser[id]"));
+	if ($count[0]) {
+		return;
+	}
 	if ($object != '/') {
 		list($table, $id) = explode('.', $object);
 		if ($table == 'decisions') {
@@ -37,6 +41,27 @@ if ($withUser) {
 
 			sendUpdate($userId, array(
 				'decisions' => array("G$id" => $update)
+			));
+		}
+		else if ($table == 'belts') {
+			$update = array('shared' => 1);
+			if ($title) {
+				$update['title'] = $title;
+			}
+			if ($message) {
+				// $update['share_message'] = $message;
+			}
+
+			$sql = array();
+			foreach ($update as $key => $value) {
+				$sql[] = "$key = '" . mysqli_real_escape_string($mysqli, $value) . "'";
+			}
+			$sql = implode(',', $sql);
+			mysqli_query($mysqli, "UPDATE m_belts SET $sql WHERE id = $id");
+
+
+			sendUpdate($userId, array(
+				'belts' => array("G$id" => $update)
 			));
 		}
 	}
@@ -107,6 +132,12 @@ else {
 			mysqli_query($mysqli, "UPDATE m_decisions SET shared = 1, share_title = $title WHERE id = $id");
 			sendUpdate($userId, array(
 				'decisions' => array("G$id" => array('share_title' => $_POST['title'], 'shared' => 1))
+			));
+		}
+		else if ($table == 'belts') {
+			mysqli_query($mysqli, "UPDATE m_belts SET shared = 1, title = $title WHERE id = $id");
+			sendUpdate($userId, array(
+				'belts' => array("G$id" => array('title' => $_POST['title'], 'shared' => 1))
 			));
 		}
 	}
