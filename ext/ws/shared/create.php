@@ -153,7 +153,21 @@ else {
 		user_id = $userId, 
 		created_at = UTC_TIMESTAMP(), 
 		email = '$with', 
-		action = '$action'");
+		action = '$action'") or die(mysqli_error($mysqli));
+
+	$invitationId = mysqli_insert_id($mysqli);
+	$changes['collaborators']["Gp$invitationId"] = array(
+		'object_user_id' => $userId,
+		'object' => $object,
+		'pending' => true,
+		'email' => $_POST['with'],
+		'invitation' => $invitationId,
+	);
+	sendMessage($userId, 'collaborators', array(
+		'userId' => $userId,
+		'changes' => json_encode($changes),
+	));
+
 
 	require_once('../../../emailTemplates/collaborateInvitation.php');
 	$body = emailTemplate_collaborateInvitation(array(
@@ -183,4 +197,5 @@ else {
 
 	$mailer = Swift_Mailer::newInstance($transport);
 	echo $mailer->send($msg);
+
 }

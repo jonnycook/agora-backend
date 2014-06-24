@@ -26,7 +26,17 @@ function deleteSharedEntry($userId, $shared) {
 	));
 }
 
-if ($_POST['userId'] && $_POST['object']) {
+if ($_POST['invitation']) {
+	$invitationId = mysqli_real_escape_string($mysqli, $_POST['invitation']);
+	mysqli_query($mysqli, "DELETE FROM invitations WHERE id = $invitationId && user_id = $_GET[userId]");
+
+	$changes['collaborators']["Gp$invitationId"] = 'deleted';
+	sendMessage($_GET['userId'], 'collaborators', array(
+		'userId' => $_GET['userId'],
+		'changes' => json_encode($changes),
+	));
+}
+else if ($_POST['userId'] && $_POST['object']) {
 	$userId = mysqli_real_escape_string($mysqli, $_POST['userId']);
 	$object = mysqli_real_escape_string($mysqli, $_POST['object']);
 	$result = mysqli_query($mysqli, "SELECT * FROM shared WHERE object = '$object' && user_id = $userId");

@@ -83,7 +83,6 @@ if ($object == '*') {
 			'with_user_name' => $withUserName,
 		);
 
-
 		if ($_GET['collaborators']) {
 			if ($row['user_id'] == $userId) {
 				$data['collaborators']["G$row[user_id].$row[object].$row[with_user_id]"] = array(
@@ -101,6 +100,21 @@ if ($object == '*') {
 			}
 		}
 	}
+
+	$result = mysqli_query($mysqli, "SELECT * FROM invitations WHERE user_id = $userId && accepted_at IS NULL");
+	while ($row = mysqli_fetch_assoc($result)) {
+		$action = json_decode($row['action']);
+		if ($action->type == 'collaborate') {
+			$data['collaborators']["Gp$row[id]"] = array(
+				'object_user_id' => $userId,
+				'object' => $action->object,
+				'pending' => true,
+				'email' => $row['email'],
+				'invitation' => $row['id'],
+			);
+		}
+	}
+
 
 	$data['activity'] = getAllActivity();
 }

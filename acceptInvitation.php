@@ -12,7 +12,7 @@ else {
 	$userId = userId();
 }
 
-$invitation = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT action,user_id,accepted_at FROM invitations WHERE `key` = '$key'"));
+$invitation = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT id,action,user_id,accepted_at FROM invitations WHERE `key` = '$key'"));
 
 if ($_GET['return']) {
 	header("Location: $_GET[return]");
@@ -23,6 +23,12 @@ if (!$invitation['accepted_at']) {
 	if ($invitation['action']) {
 		$action = json_decode($invitation['action'], true);
 		if ($action['type'] == 'collaborate') {
+			$changes['collaborators']["Gp$invitation[id]"] = 'deleted';
+			sendMessage($userId, 'collaborators', array(
+				'userId' => $userId,
+				'changes' => json_encode($changes),
+			));
+
 			sendMessage($user['id'], 'share/create', array(
 				'clientId' => 'Carl Sagan',
 				'userId' => $invitation['user_id'],
