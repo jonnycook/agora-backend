@@ -367,14 +367,14 @@ class ProductsTableHandler extends SqlTableHandler {
 			'ratingCount' => $record['rating_count'] ? $record['rating_count'] : $storageRecord['rating_count'],
 			'image' => $record['image_url'] ? $record['image_url'] : $storageRecord['image_url'],
 			'last_scraped_at' => $record['last_scraped_at'],
-			'scraper_version' => $record['scraper_version'],
+			'scraper_version' => $record['scraper_version']
 		);
 		if ($storageRecord['type'] == 0) {
 			$modelRecord += array(
 				'siteName' => static::storageSiteIdToModelSiteName($storageRecord['site_id']),
 				'productSid' => $storageRecord['sid'],
 				'retrievalId' => $record['retrieval_id'],
-				'offer' => $record['offer'],
+				'offer' => $record['offer']
 			);
 
 			if (USE_RIAK) {
@@ -1099,6 +1099,8 @@ class Storage extends DBStorage {
 
 		// var_dump($this->userId);
 		if ($args['products']) {
+			$tableHandler = $this->tableHandler('products');
+
 			if ($args['products'] == 'referenced') {
 				if ($productIds) {
 					$result = $this->query("SELECT * FROM m_products WHERE id IN (" . implode(', ', $productIds) . ')');
@@ -1111,7 +1113,6 @@ class Storage extends DBStorage {
 			} 
 			else {
 				$result = $this->query("SELECT * FROM user_products WHERE user_id = $this->userId");
-				$tableHandler = $this->tableHandler('products');
 				while ($row = mysqli_fetch_assoc($result)) {
 					$row['id'] = $row['product_id'];
 					$allRecordsQuery['Product'][] = $row['id'];
