@@ -489,7 +489,6 @@ class ProductsTableHandler extends SqlTableHandler {
 			// $this->query("UPDATE `user_products` SET $setQueryPart WHERE user_id = $this->userId && product_id = $this->storageId");
 
 
-
 			$this->query("UPDATE `user_products` SET $setQueryPart, updated_at = UTC_TIMESTAMP() WHERE user_id = $this->userId && product_id = $this->storageId");
 			if (!mysqli_affected_rows($mysqli)) {
 				if (!$values['sid'] || !$values['site_id']) {
@@ -977,6 +976,8 @@ class Storage extends DBStorage {
 		$elementsQueue = (array)$args['elements'];
 		$recordsQuery = (array)$args['records'];
 
+		$productIds = array();
+
 		if ($args['root']) {
 			$table = modelNameToTableName($args['root']);
 			$query = "SELECT * FROM m_$table WHERE user_id = $this->userId";
@@ -1015,8 +1016,13 @@ class Storage extends DBStorage {
 				while ($row = mysqli_fetch_assoc($result)) {
 					$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
 					$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
-					if ($row['element_type'] && $row['element_type'] != 'Product') {
-						$recordsQuery[$row['element_type']][] = $row['element_id'];
+					if ($row['element_type']) {
+						if ($row['element_type'] == 'Product') {
+							$productIds[] = $row['element_id'];
+						}
+						else {
+							$recordsQuery[$row['element_type']][] = $row['element_id'];
+						}
 					}
 
 					if ($table == 'list_elements') {
@@ -1044,6 +1050,10 @@ class Storage extends DBStorage {
 						$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
 						$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
 						switch ($table) {
+							case 'product_variants':
+								$productIds[] = $row['product_id'];
+								break;
+
 							case 'decisions':
 								$newRecordsQuery['List'][] = $row['list_id'];
 								// $elementsQueue[] = array('decision_elements', 'decision_id', $row['id']);
@@ -1089,13 +1099,26 @@ class Storage extends DBStorage {
 
 		// var_dump($this->userId);
 		if ($args['products']) {
-			$result = $this->query("SELECT * FROM user_products WHERE user_id = $this->userId");
-			$tableHandler = $this->tableHandler('products');
-			while ($row = mysqli_fetch_assoc($result)) {
-				$row['id'] = $row['product_id'];
-				$allRecordsQuery['Product'][] = $row['id'];
-				$modelId = $tableHandler->deriveModelIdFromStorageRecord('products', $row);
-				$modelRecords['products'][$modelId] = $tableHandler->mapStorageRecordToModelRecord('products', $row, $modelId);
+			if ($args['products'] == 'referenced') {
+				if ($productIds) {
+					$result = $this->query("SELECT * FROM m_products WHERE id IN (" . implode(', ', $productIds) . ')');
+					while ($row = mysqli_fetch_assoc($result)) {
+						$row['id'] = $row['product_id'];
+						$allRecordsQuery['Product'][] = $row['id'];
+						$modelId = $tableHandler->deriveModelIdFromStorageRecord('products', $row);
+						$modelRecords['products'][$modelId] = $tableHandler->mapStorageRecordToModelRecord('products', $row, $modelId);
+					}
+				}
+			} 
+			else {
+				$result = $this->query("SELECT * FROM user_products WHERE user_id = $this->userId");
+				$tableHandler = $this->tableHandler('products');
+				while ($row = mysqli_fetch_assoc($result)) {
+					$row['id'] = $row['product_id'];
+					$allRecordsQuery['Product'][] = $row['id'];
+					$modelId = $tableHandler->deriveModelIdFromStorageRecord('products', $row);
+					$modelRecords['products'][$modelId] = $tableHandler->mapStorageRecordToModelRecord('products', $row, $modelId);
+				}
 			}
 			
 			// $result = $this->query("SELECT * FROM m_product_variants WHERE user_id = $this->userId");

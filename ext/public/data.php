@@ -20,7 +20,7 @@ if ($type == 'decisions') $model = 'Decision';
 
 $data = $db->storage->getData(array(
 	'records' => array($model => array($id)),
-	'products' => true
+	'products' => 'referenced'
 ));
 $data = $db->prepareData($data);
 
