@@ -1103,7 +1103,6 @@ class Storage extends DBStorage {
 				if ($productIds) {
 					$result = $this->query("SELECT * FROM m_products WHERE id IN (" . implode(', ', $productIds) . ')');
 					while ($row = mysqli_fetch_assoc($result)) {
-						$row['id'] = $row['product_id'];
 						$allRecordsQuery['Product'][] = $row['id'];
 						$modelId = $tableHandler->deriveModelIdFromStorageRecord('products', $row);
 						$modelRecords['products'][$modelId] = $tableHandler->mapStorageRecordToModelRecord('products', $row, $modelId);
