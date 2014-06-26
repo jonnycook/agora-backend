@@ -784,6 +784,7 @@ class DecisionsTableHandler extends SqlTableHandler {
 			'share_message' => $storageRecord['share_message'],
 			'shared' => $storageRecord['shared'],
 			'creator_id' => $storageRecord['creator_id'],
+			'access' => $storageRecord['access'],
 			// 'element_type' => $storageRecord['element_type'],
 			// 'element_id' => $this->db->tableHandler($elementTable)->storageLocationToModelId($elementTable, $storageRecord['element_id']),
 		);

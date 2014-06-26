@@ -2,11 +2,22 @@
 
 require_once('header.php');
 
+$map = array(
+	'decisions' => 'Decision'
+);
 
 $type = $_GET['type'];
-$id = $_GET['id'];
+
+if (!$map[$type]) exit;
+
+$id = mysqli_real_escape_string($mysqli, $_GET['id']);
 
 $row = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_$type WHERE id = $id"));
+
+if (!$row['access']) {
+	echo '"accessDenied"';
+	exit;
+}
 
 $userId = userId();
 if (!$userId) {
@@ -16,7 +27,7 @@ if (!$userId) {
 $db = makeDb($userId, null);
 $db->queryByUserId = false;
 
-if ($type == 'decisions') $model = 'Decision';
+$model = $map[$type];
 
 $data = $db->storage->getData(array(
 	'records' => array($model => array($id)),
