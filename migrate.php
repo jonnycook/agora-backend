@@ -33,6 +33,6 @@ $tables = array(
 
 $result = mysqli_query($mysqli, 'SELECT * FROM m_products_old');
 while ($row = mysqli_fetch_assoc($result)) {
-	$products[$row['site_id']][$row['product_sid']][] = $row;
+	$products[$row['site_id']][$row['sid']][] = $row;
 }
 var_dump($products);
