@@ -29,7 +29,7 @@ $tables = array(
 	'm_data',
 );
 
-$result = mysqli_query('SELECT * FROM m_products_old');
+$result = mysqli_query($mysqli, 'SELECT * FROM m_products_old');
 while ($row = mysqli_fetch_assoc($result)) {
 	$products[$row['site_id']][$row['product_sid']][] = $row;
 }
