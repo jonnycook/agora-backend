@@ -35,4 +35,42 @@ $result = mysqli_query($mysqli, 'SELECT * FROM m_products_old');
 while ($row = mysqli_fetch_assoc($result)) {
 	$products[$row['site_id']][$row['sid']][] = $row;
 }
+
+function value($value) {
+	if ($value == null) {
+		return 'NULL';
+	}
+	else {
+		return "'$value'";
+	}
+}
+
+foreach ($products as $siteId, $siteProducts) {
+	foreach ($siteProducts as $sid => $rows) {
+		$row = $rows[0];
+		mysqli_query($mysqli, "INSERT INTO m_products" .
+			'type = ' . value($row['type']) . ',' .
+			'sid = ' . value($row['sid']) . ',' .
+			'site_id = ' . value($row['site_id']) . ',' .
+			'title = ' . value($row['title']) . ',' .
+			'image_url = ' . value($row['image_url']) . ',' .
+			'price = ' . value($row['price']) . ',' .
+			'retrieval_id = ' . value($row['retrieval_id']) . ',' .
+			'currency = ' . value($row['currency']) . ',' .
+			'url = ' . value($row['url']) . ',' .
+			'offer = ' . value($row['offer']) . ',' .
+			'rating = ' . value($row['rating']) . ',' .
+			'rating_count = ' . value($row['rating_count']) . ',' .
+			'created_at = ' . value($row['created_at']) . ',' .
+			'last_scraped_at = ' . value($row['last_scraped_at']) . ',' .
+			'status = ' . value($row['status'])) or die(mysqli_error($mysqli));
+
+		$id = mysqli_insert_id($msyqli);
+		$newId[$siteId][$sid] = $id;
+	}
+}
+
+var_dump($newId);
+
+
 var_dump($products);
