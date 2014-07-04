@@ -46,6 +46,10 @@ function value($value) {
 	}
 }
 
+set_time_limit(0);
+
+mysqli_query($mysqli, 'TRUNCATE TABLE m_products');
+
 foreach ($products as $siteId => $siteProducts) {
 	foreach ($siteProducts as $sid => $rows) {
 		$row = $rows[0];
@@ -66,7 +70,7 @@ foreach ($products as $siteId => $siteProducts) {
 			'`last_scraped_at` = ' . value($row['last_scraped_at']) . ',' .
 			'`status` = ' . value($row['status'])) or die(mysqli_error($mysqli));
 
-		$id = mysqli_insert_id($msyqli);
+		$id = mysqli_insert_id($mysqli);
 		$newId[$siteId][$sid] = $id;
 	}
 }
