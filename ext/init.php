@@ -328,6 +328,7 @@ class ProductsTableHandler extends SqlTableHandler {
 				}
 			case 'retrievalId':
 				return array('retrieval_id' => $value);
+			case 'purchased': return $value ? 1 : 0;
 		}
 
 		return $value;
@@ -367,7 +368,8 @@ class ProductsTableHandler extends SqlTableHandler {
 			'ratingCount' => $record['rating_count'] ? $record['rating_count'] : $storageRecord['rating_count'],
 			'image' => $record['image_url'] ? $record['image_url'] : $storageRecord['image_url'],
 			'last_scraped_at' => $record['last_scraped_at'],
-			'scraper_version' => $record['scraper_version']
+			'scraper_version' => $record['scraper_version'],
+			'purchased' => !!$record['purchased'],
 		);
 		if ($storageRecord['type'] == 0) {
 			$modelRecord += array(
@@ -560,6 +562,7 @@ class UsersTableHandler extends SqlTableHandler {
 			'name' => $storageRecord['name'],
 			'tutorials' => $storageRecord['tutorials'],
 			'user_colors' => $storageRecord['user_colors'],
+			'tutorial_step' => $storageRecord['tutorial_step'],
 		);
 	}
 }
@@ -763,7 +766,12 @@ class DecisionsTableHandler extends SqlTableHandler {
 			return $this->db->resolveIdToStorageId('lists', $value);
 		}
 		else if ($field == 'shared') {
-			return $value ? 1 : 0;
+			if ($this->userId == $this->clientUserId) {
+				return $value ? 1 : 0;				
+			}
+			else {
+				return array();
+			}
 		}
 
 		// else if ($field == 'dismissal_list_id') {

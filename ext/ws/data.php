@@ -138,6 +138,7 @@ else {
 	else if ($table == 'belts') $model = 'Belt';
 	else if ($table == 'lists') $model = 'List';
 	else if ($table == 'bundles') $model = 'Bundle';
+	else if ($table == 'object_references') $model = 'ObjectReference';
 	else throw new Exception("invalid object $object");
 
 	$data = $db->storage->getData(array(

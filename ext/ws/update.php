@@ -35,6 +35,8 @@ if ($clientId != 'Carl Sagan') {
 	}
 }
 
+mysqli_query($mysqli, "UPDATE m_users SET last_request = UTC_TIMESTAMP() WHERE id = $userId");
+
 $db = makeDb($userId, $clientUserId);
 $db->queryByUserId = true;
 
@@ -43,6 +45,16 @@ $activity = $requestChanges['activity'];
 unset($requestChanges['activity']);
 $sharedObjects = $requestChanges['shared_objects'];
 unset($requestChanges['shared_objects']);
+
+if ($userId != $clientUserId) {
+	if ($requestChanges['decisions']) {
+		foreach ($requestChanges['decisions'] as $id => &$changes) {
+			unset($changes['access']);
+		}
+		unset($changes);
+	}
+}
+
 $db->execute((array)$requestChanges);
 
 if ($clientId != 'Carl Sagan') {

@@ -54,6 +54,13 @@ function emailTemplate_collaborateInvitation($params) {
 		</td>
 	</tr>
 	<tr>
+		<td style="<?php echo $textStyles ?>; font-size:16px">
+			<p>You've been requested by <span class="font-weight:bold"><?php echo $params['name'] ?></span> to use Agora to collaborate on some online shopping.</p>
+			<div style="font-weight:bold">What?</div>
+			<p style="margin-top:0">With Agora's collaborative shopping tools you'll be able to manage your online shopping together for whatever you like in one place. You can collect, organize, and discuss products from across many websites.</p>
+			<p>Agora is free, light-weight, and easy to use. We're sure <?php echo $params['name'] ?> would appreciate your help and hopefully Agora can help you with your own online shopping as well.</p>
+		</td>
+	<tr>
 		<td align="center" style="height:175px">
 			<a href="<?php echo $params['url'] ?>"><img src="<?php echo $imageRoot ?>collaborateButton.png" width="320" height="76"></a>
 		</td>

@@ -6,7 +6,12 @@ require_once('includes/header.php');
 function insert($values, $table) {
 	global $mysqli;
 	foreach ($values as $field => $value) {
-		$setters[] = "`$field` = '" . mysqli_real_escape_string($mysqli, $value) . '\'';
+		if ($value === null) {
+			$setters[] = "`$field` = NULL";
+		}
+		else {
+			$setters[] = "`$field` = '" . mysqli_real_escape_string($mysqli, $value) . '\'';
+		}
 	}
 
 	$query = "INSERT INTO `$table` SET " . implode(',', $setters);
@@ -14,12 +19,18 @@ function insert($values, $table) {
 }
 
 insert(array(
-	'userId' => $_POST['userId'],
-	'error' => json_encode($_POST['error']),
+	'type' => $_POST['type'],
+	'error_message' => $_POST['error']['message'],
+	'error_stack' => $_POST['error']['stack'],
+	'error_line' => $_POST['error']['line'],
+	'error_column' => $_POST['error']['column'],
+	'error_file' => $_POST['error']['file'],
+	'error_info' => $_POST['error']['info'],
+
+	'userId' => $_POST['userId'],	
 	'args' => json_encode($_POST['args']),
 	'extVersion' => $_POST['extVersion'],
 	'apiVersion' => $_POST['apiVersion'],
-	'instanceId' => $_POST['instanceId'],
 	'clientId' => $_POST['clientId'],
 	'ip' => remoteAddr()
 ), 'extension_errors');
