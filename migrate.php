@@ -1,6 +1,7 @@
 <?php
 
 require_once('includes/header.php');
+echo 'test';
 
 $result = mysqli_query($mysqli, "SELECT id FROM m_users") or die(mysqli_error($mysqli));
 while ($row = mysqli_fetch_assoc($result)) {
