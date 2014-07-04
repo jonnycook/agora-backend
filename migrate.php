@@ -2,7 +2,7 @@
 
 require_once('includes/header.php');
 echo 'test';
-
+var_dump(ENV);
 $result = mysqli_query($mysqli, "SELECT id FROM m_users");
 while ($row = mysqli_fetch_assoc($result)) {
 	var_dump($row);
