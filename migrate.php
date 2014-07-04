@@ -45,7 +45,7 @@ function value($value) {
 	}
 }
 
-foreach ($products as $siteId, $siteProducts) {
+foreach ($products as $siteId => $siteProducts) {
 	foreach ($siteProducts as $sid => $rows) {
 		$row = $rows[0];
 		mysqli_query($mysqli, "INSERT INTO m_products" .
