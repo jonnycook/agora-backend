@@ -77,5 +77,13 @@ foreach ($products as $siteId => $siteProducts) {
 
 var_dump($newId);
 
-
-var_dump($products);
+foreach ($products as $siteId => $siteProducts) {
+	foreach ($siteProducts as $sid => $rows) {
+		$ids = array_map(function($row) { return $row['id'] }, $rows);
+		$id = $newId[$sideId][$sid];
+		foreach ($tables as $table) {
+			$sql = "UPDATE $table SET element_id = $id WHERE element_type = 'Product' && element_id IN (" . implode(', ', $ids) . ')';
+			echo "$sql\n";
+		}
+	}
+}
