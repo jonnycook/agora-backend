@@ -436,7 +436,7 @@ class ProductsTableHandler extends SqlTableHandler {
 
 			$setQueryPart = static::setQueryPart($storageRecord);
 
-			$this->query("INSERT INTO user_products SET updated_at = UTC_TIMESTAMP(), product_id = $id, user_id = $this->userId, $setQueryPart");
+			$this->query("INSERT IGNORE INTO user_products SET updated_at = UTC_TIMESTAMP(), product_id = $id, user_id = $this->userId, $setQueryPart");
 
 			$onInsert = TableHandler::$onInsert;
 
