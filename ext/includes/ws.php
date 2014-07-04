@@ -1,7 +1,7 @@
 <?php
 
 function gatewayServer($userId) {
-	return 'localhost:3000';
+	return GATEWAY . ':3000';
 }
 
 function sendMessage($userId, $type, $args) {

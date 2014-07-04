@@ -26,6 +26,8 @@ switch (ENV) {
 		define('USE_RIAK', false);
 		define('MONGO_DB', 'agora');
 		define('SITE_DOMAIN', 'agora.dev');
+		define('GATEWAY', 'localhost')
+
 		break;
 
 
@@ -67,6 +69,8 @@ switch (ENV) {
 		define('RIAK_HOST', '50.116.31.117');
 		define('MONGO_DB', 'agora_prod');
 		define('SITE_DOMAIN', 'agora.sh');
+
+		define('GATEWAY', '50.116.26.9')
 		break;
 }
 
