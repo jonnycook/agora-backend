@@ -14,7 +14,7 @@ if ($userId != null) {
 		$server = '66.228.54.96:8081';
 	}
 	else {
-		$result = mysqli_query($mysqli, 'SELECT ip FROM servers WHERE type = "update"');
+		$result = mysqli_query($mysqli, 'SELECT ip FROM servers WHERE type = "router"');
 		$updaterServers = array();
 		while ($row = mysqli_fetch_row($result)) {
 			$updaterServers[] = $row[0];
