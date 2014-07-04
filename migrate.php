@@ -49,7 +49,7 @@ function value($value) {
 foreach ($products as $siteId => $siteProducts) {
 	foreach ($siteProducts as $sid => $rows) {
 		$row = $rows[0];
-		mysqli_query($mysqli, "INSERT INTO m_products" .
+		mysqli_query($mysqli, "INSERT INTO m_products " .
 			'type = ' . value($row['type']) . ',' .
 			'sid = ' . value($row['sid']) . ',' .
 			'site_id = ' . value($row['site_id']) . ',' .
