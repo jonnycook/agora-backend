@@ -29,6 +29,7 @@ $tables = array(
 	'm_bundle_elements',
 	'm_feelings',
 	'm_data',
+	'm_root_elements',
 );
 
 $result = mysqli_query($mysqli, 'SELECT * FROM m_products_old');
@@ -82,8 +83,9 @@ foreach ($products as $siteId => $siteProducts) {
 		$ids = array_map(function($row) { return $row['id']; }, $rows);
 		$id = $newId[$siteId][$sid];
 		foreach ($tables as $table) {
-			$sql = "UPDATE $table SET element_id = $id WHERE element_type = 'Product' && element_id IN (" . implode(', ', $ids) . ')';
-			echo "$sql\n";
+			$sql = "UPDATE $table SET updated=1, element_id = $id WHERE !updated && element_type = 'Product' && element_id IN (" . implode(', ', $ids) . ')';
+			// echo "$sql\n";
+			mysqli_query($mysqli, $sql) or die(mysqli_error($msyqli));
 		}
 	}
 }
