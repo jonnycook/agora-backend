@@ -2,7 +2,7 @@
 
 require_once('includes/header.php');
 
-$result = mysqli_query($mysqli, "SELECT id FROM m_users");
+$result = mysqli_query($mysqli, "SELECT id FROM m_users") or die(mysqli_error($mysqli));
 while ($row = mysqli_fetch_assoc($result)) {
 	mysqli_query($mysqli, "INSERT INTO m_belts SET user_id = $row[id], creator_id = $row[id]");
 	$beltId = mysqli_insert_id($mysqli);
