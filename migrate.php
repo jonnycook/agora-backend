@@ -41,7 +41,8 @@ function value($value) {
 		return 'NULL';
 	}
 	else {
-		return "'$value'";
+		global $mysqli;
+		return '"' . mysqli_real_escape_string($mysqli, $value) . '"';
 	}
 }
 
