@@ -6,6 +6,7 @@ $userId = userId();
 
 if ($userId != null) {
 	$extVersion = mysqli_real_escape_string($mysqli, $_GET['extVersion']);
+	$instanceId = mysqli_real_escape_string($mysqli, $_GET['instanceId']);
 
 	if (ENV == 'LOCAL_DEV') {
 		$server = 'localhost:8080';
@@ -24,7 +25,7 @@ if ($userId != null) {
 
 	$clientId = md5(rand());
 	mysqli_query($mysqli, "UPDATE m_users SET ext_version = '$extVersion' WHERE id = $userId"); 
-	mysqli_query($mysqli, "INSERT INTO clients SET client_id = '$clientId', user_id = $userId, created_at = UTC_TIMESTAMP(), last_seen_at = UTC_TIMESTAMP(), `version` = '$extVersion', updater_server = '$server'");
+	mysqli_query($mysqli, "INSERT INTO clients SET client_id = '$clientId', instance_id = '$instanceId', user_id = $userId, created_at = UTC_TIMESTAMP(), last_seen_at = UTC_TIMESTAMP(), `version` = '$extVersion', updater_server = '$server'");
 	$user = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT track FROM m_users WHERE id = $userId"));
 
 
