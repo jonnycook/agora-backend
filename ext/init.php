@@ -356,7 +356,7 @@ class ProductsTableHandler extends SqlTableHandler {
 		if (USE_RIAK) {
 			$riak = riakClient();
 			$bucket = $riak->bucket("$this->userId.products");
-			$object = $bucket->get($modelId);
+			$object = $bucket->get(/*$modelId*/'test');
 			if ($_GET['debug']) {
 				var_dump($object->getData());
 			}
@@ -456,7 +456,7 @@ class ProductsTableHandler extends SqlTableHandler {
 		if (USE_RIAK) {
 			$riak = riakClient();
 			$bucket = $riak->bucket("$this->userId.products");
-			$bucket->newObject($id, $this->riakData())->store();
+			$bucket->newObject(/*$id*/'test', $this->riakData())->store();
 		}
 		return $id;
 	}
@@ -512,12 +512,12 @@ class ProductsTableHandler extends SqlTableHandler {
 		if (USE_RIAK) {
 			$riak = riakClient();
 			$bucket = $riak->bucket("$this->userId.products");
-			$object = $bucket->get($this->modelId);
+			$object = $bucket->get(/*$this->modelId*/'test');
 			if ($object->getData()) {
 				$object->setData(array_merge($object->getData(), $this->riakData()))->store();
 			}
 			else {
-				$bucket->newObject($this->modelId, $this->riakData())->store();
+				$bucket->newObject(/*$this->modelId*/'test', $this->riakData())->store();
 			}
 		}
 
