@@ -16,9 +16,9 @@ require_once('includes/Basho/Riak/MapReduce/Phase.php');
 $riak = new Basho\Riak\Riak('50.116.31.117', 10018);
 
 // $bucket->newObject($id, $this->riakData())->store();
-$riak->bucket('test')->newObject('test', 'test')->store();
+// $riak->bucket('test')->newObject('test', 'test')->store();
 
-$bucket = $riak->bucket('test');
+$bucket = $riak->bucket('32.products');
 var_dump($bucket->get('test'));
 
 
