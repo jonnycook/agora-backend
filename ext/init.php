@@ -357,6 +357,9 @@ class ProductsTableHandler extends SqlTableHandler {
 			$riak = riakClient();
 			$bucket = $riak->bucket("$this->userId.products");
 			$object = $bucket->get($modelId);
+			if ($_GET['debug']) {
+				var_dump($object->getData());
+			}
 		}
 		$record = mysqli_fetch_assoc($this->query("SELECT * FROM user_products WHERE product_id = $storageRecord[id] && user_id = $this->userId"));
 
