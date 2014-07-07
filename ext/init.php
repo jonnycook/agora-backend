@@ -381,6 +381,9 @@ class ProductsTableHandler extends SqlTableHandler {
 
 			if (USE_RIAK) {
 				$modelRecord += array('offers' => $object->getData()['offers']);
+				if (defined('GET_RIAK_FIELDS')) {
+					$modelRecord += array('more' => $object->getData()['more'], 'reviews' => $object->getData()['reviews']);
+				}
 			}
 		}
 		else {

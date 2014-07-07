@@ -1,1 +1,1 @@
-ssh -t root@198.58.127.60 "cd /var/www/ext.agora.sh/public_html/; git pull"
+ssh -t root@agora.sh "cd /var/www/ext.agora.sh/public_html/; git pull"

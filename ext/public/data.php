@@ -1,6 +1,7 @@
 <?php
 
 require_once('header.php');
+define('GET_RIAK_FIELDS', true);
 
 $map = array(
 	'decisions' => 'Decision'

@@ -67,6 +67,7 @@ $responseChanges = array();
 
 if ($activity) {
 	foreach ($activity as $id => $entry) {
+		if ($entry == 'deleted') continue;
 		$table = modelNameToTableName($entry['object_type']);
 		$objectId = $mapping[$table][$entry['object_id']];
 		if (!$objectId) $objectId = $entry['object_id'];
