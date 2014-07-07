@@ -404,7 +404,7 @@ class ProductsTableHandler extends SqlTableHandler {
 	}
 
 	private function riakData() {
-		$data = array();
+		$data = array('test' => 'test');
 		foreach ($this->riakFields() as $field) {
 			if (isset($this->modelRecord[$field])) {
 				$data[$field] = $this->modelRecord[$field];
