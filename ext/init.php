@@ -356,7 +356,7 @@ class ProductsTableHandler extends SqlTableHandler {
 		if (USE_RIAK) {
 			$riak = riakClient();
 			$bucket = $riak->bucket("$this->userId.products");
-			$object = $bucket->get(/*$modelId*/'test');
+			$object = $bucket->get($modelId);
 			if ($_GET['debug']) {
 				var_dump($object->getData());
 			}
@@ -439,7 +439,6 @@ class ProductsTableHandler extends SqlTableHandler {
 			$this->query("INSERT INTO `m_$this->storageTable` SET $setQueryPart");
 			$id = mysqli_insert_id($mysqli);
 
-
 			$setQueryPart = static::setQueryPart($storageRecord);
 
 			$this->query("INSERT IGNORE INTO user_products SET updated_at = UTC_TIMESTAMP(), product_id = $id, user_id = $this->userId, $setQueryPart");
@@ -456,7 +455,7 @@ class ProductsTableHandler extends SqlTableHandler {
 		if (USE_RIAK) {
 			$riak = riakClient();
 			$bucket = $riak->bucket("$this->userId.products");
-			$bucket->newObject(/*$id*/'test', $this->riakData())->store();
+			$bucket->newObject($id, $this->riakData())->store();
 		}
 		return $id;
 	}
@@ -512,12 +511,12 @@ class ProductsTableHandler extends SqlTableHandler {
 		if (USE_RIAK) {
 			$riak = riakClient();
 			$bucket = $riak->bucket("$this->userId.products");
-			$object = $bucket->get(/*$this->modelId*/'test');
+			$object = $bucket->get($this->modelId);
 			if ($object->getData()) {
 				$object->setData(array_merge($object->getData(), $this->riakData()))->store();
 			}
 			else {
-				$bucket->newObject(/*$this->modelId*/'test', $this->riakData())->store();
+				$bucket->newObject($this->modelId, $this->riakData())->store();
 			}
 		}
 
