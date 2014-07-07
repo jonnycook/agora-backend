@@ -517,7 +517,7 @@ class ProductsTableHandler extends SqlTableHandler {
 				$object->setData(array_merge($object->getData(), $this->riakData()))->store();
 			}
 			else {
-				$bucket->newObject($id, $this->riakData())->store();
+				$bucket->newObject($this->modelId, $this->riakData())->store();
 			}
 		}
 
