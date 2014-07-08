@@ -25,7 +25,7 @@ for ($i = 0; $i < strlen($garbledId); ++ $i) {
 
 $hash = md5($id . 'salty apple sauce');
 
-if (substr($hash, 0, strlen($id)) != $hashPart) {
+if (substr($hash, 0, strlen($hashPart)) != $hashPart) {
 	echo '"invalidId"';
 	exit;
 }
