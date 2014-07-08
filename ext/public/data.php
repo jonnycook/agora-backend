@@ -55,4 +55,4 @@ $data = $db->storage->getData(array(
 ));
 $data = $db->prepareData($data);
 
-echo json_encode($data);
+echo json_encode(array('data' => $data, 'id' => $id));
