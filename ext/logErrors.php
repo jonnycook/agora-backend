@@ -25,7 +25,7 @@ insert(array(
 	'error_line' => $_POST['error']['line'],
 	'error_column' => $_POST['error']['column'],
 	'error_file' => $_POST['error']['file'],
-	'error_info' => $_POST['error']['info'],
+	'error_info' => json_encode($_POST['error']['info']),
 
 	'userId' => $_POST['userId'],	
 	'args' => json_encode($_POST['args']),
