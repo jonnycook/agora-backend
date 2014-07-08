@@ -11,7 +11,26 @@ $type = $_GET['type'];
 
 if (!$map[$type]) exit;
 
-$id = mysqli_real_escape_string($mysqli, $_GET['id']);
+$garbledId = '72881e';
+$id = '';
+$hashPart = '';
+for ($i = 0; $i < strlen($garbledId); ++ $i) {
+	if ($i % 2) {
+		$hashPart .= $garbledId[$i];
+	}
+	else {
+		$id .= $garbledId[$i];
+	}
+}
+
+$hash = md5($id . 'salty apple sauce');
+
+if (substr($hash, 0, strlen($id)) != $hashPart) {
+	echo '"invalidId"';
+	exit;
+}
+
+$id = mysqli_real_escape_string($mysqli, $id);
 
 $row = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_$type WHERE id = $id"));
 
