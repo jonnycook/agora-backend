@@ -11,7 +11,7 @@ $type = $_GET['type'];
 
 if (!$map[$type]) exit;
 
-$garbledId = '72881e';
+$garbledId = $_GET['id'];
 $id = '';
 $hashPart = '';
 for ($i = 0; $i < strlen($garbledId); ++ $i) {
@@ -24,10 +24,6 @@ for ($i = 0; $i < strlen($garbledId); ++ $i) {
 }
 
 $hash = md5($id . 'salty apple sauce');
-var_dump($hash);
-var_dump($id);
-var_dump($hashPart);
-
 
 if (substr($hash, 0, strlen($hashPart)) != $hashPart) {
 	echo '"invalidId"';

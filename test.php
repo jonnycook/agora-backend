@@ -1,6 +1,6 @@
 <?php
 
-$garbledId = '72881e';
+$garbledId = '72831c';
 $id = '';
 $hashPart = '';
 for ($i = 0; $i < strlen($garbledId); ++ $i) {
@@ -12,7 +12,7 @@ for ($i = 0; $i < strlen($garbledId); ++ $i) {
 	}
 }
 
-$hash = md5($id . 'apple sauce');
+$hash = md5($id . 'salty apple sauce');
 
 var_dump($id);
 var_dump($hashPart);
