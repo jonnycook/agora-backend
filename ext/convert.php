@@ -1,6 +1,6 @@
 <?php
 
-require_once('header.php');
+require_once('includes/header.php');
 $userId = userId();
 
 $user = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT click_id, converted FROM m_users WHERE id = $userId"));
