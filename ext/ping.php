@@ -6,6 +6,18 @@ $id = mysqli_real_escape_string($mysqli, $_GET['id']);
 $version = mysqli_real_escape_string($mysqli, $_GET['version']);
 $userId = userId();
 
+$response = mysqli_query($mysqli, "SELECT id,command FROM client_commands WHERE stage = 0 && client_id = '$id'");
+while ($row = mysqli_fetch_assoc($response)) {
+	$commands[] = array(
+		'id' => $row['id'],
+		'command' => $row['command'],
+	);
+}
+if ($commands) {
+	mysqli_query($mysqli, "UPDATE client_commands SET stage = 1 WHERE id IN (" . implode(',', array_map(function($i) { return $i['id']; }, $commands))  . ')');
+}
+
+
 $extension = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM extension_instances WHERE id = '$id'"));
 if ($extension) {
 	$sql = array(
@@ -37,6 +49,11 @@ else {
 		$sql[] = "first_user_at = UTC_TIMESTAMP()";
 	}
 
-
 	mysqli_query($mysqli, "INSERT INTO extension_instances SET " . implode(',', $sql));
+}
+
+if ($commands) {
+	echo json_encode(array(
+		'commands' => $commands
+	));
 }
