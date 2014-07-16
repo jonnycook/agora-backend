@@ -4,6 +4,7 @@ require_once('includes/header.php');
 
 $id = mysqli_real_escape_string($mysqli, $_GET['id']);
 $version = mysqli_real_escape_string($mysqli, $_GET['version']);
+$state = mysqli_real_escape_string($mysqli, $_GET['state']);
 $userId = userId();
 
 $response = mysqli_query($mysqli, "SELECT id,command FROM client_commands WHERE stage = 0 && client_id = '$id'");
@@ -17,7 +18,6 @@ if ($commands) {
 	mysqli_query($mysqli, "UPDATE client_commands SET stage = 1 WHERE id IN (" . implode(',', array_map(function($i) { return $i['id']; }, $commands))  . ')');
 }
 
-
 $extension = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM extension_instances WHERE id = '$id'"));
 if ($extension) {
 	$sql = array(
@@ -26,6 +26,11 @@ if ($extension) {
 	if ($extension['version'] != $version) {
 		$sql[] = "current_version = '$version'";
 	}
+
+	if ($extension['state'] != $state) {
+		$sql[] = "state = $state";
+	}
+
 	if ($extension['user_id'] != $userId) {
 		$sql[] = "user_id = $userId";
 		if (!$extension['user_id']) {
