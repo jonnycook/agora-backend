@@ -149,6 +149,12 @@ DB::$models = array(
 			'product_id' => 'products',
 		),
 	),
+	'product_watches' => array(
+		// 'distinct' => array('product_id', 'variant'),
+		'referents' => array(
+			'product_id' => 'products',
+		),
+	),
 	'root_elements' => array(
 		'referents' => array(
 			'element_id' => map,
@@ -552,6 +558,43 @@ class ProductVariantsTableHandler extends SqlTableHandler {
 			// 'display_options' => $storageRecord['display_options'],
 			// 'element_type' => $storageRecord['element_type'],
 			// 'element_id' => $this->db->tableHandler($elementTable)->storageLocationToModelId($elementTable, $storageRecord['element_id']),
+		);
+	}
+}
+
+class ProductWatchesTableHandler extends SqlTableHandler {
+	public static function modelTableName() { return 'product_watches'; }
+	public function storageTableHasUserIdField() { return true; }
+	public function mapModelFieldToStorageField($field, $value) {
+		switch ($field) {
+			case 'product_id': return $this->db->resolveIdToStorageId('products', $value);
+			case 'enable_threshold': return $value ? 1 : 0;
+			case 'enable_stock': return $value ? 1 : 0;
+			case 'enable_increment': return $value ? 1 : 0;
+			case 'seen': return $value ? 1 : 0;
+			case 'watch_threshold': return $value === '' ? null : $value;
+			case 'watch_increment': return $value === '' ? null : $value;
+		}
+
+		return $value;
+	}
+
+	public function mapStorageRecordToModelRecord($storageTable, $storageRecord, $modelId) {
+		return array(
+			'product_id' => $this->db->tableHandler('products')->storageLocationToModelId('products', $storageRecord['product_id']),
+			'watch_threshold' => $storageRecord['watch_threshold'],
+			'watch_increment' => $storageRecord['watch_increment'],
+			'reported_stock' => $storageRecord['reported_stock'],
+			'reported_listing' => $storageRecord['reported_listing'],
+			'reported_new' => $storageRecord['reported_new'],
+			'reported_used' => $storageRecord['reported_used'],
+			'reported_refurbished' => $storageRecord['reported_refurbished'],
+			'enable_threshold' => $storageRecord['enable_threshold'],
+			'enable_stock' => $storageRecord['enable_stock'],
+			'enable_increment' => $storageRecord['enable_increment'],
+			'watch_condition' => $storageRecord['watch_condition'],
+			'seen' => $storageRecord['seen'],
+			'index' => $storageRecord['index'],
 		);
 	}
 }
@@ -1183,6 +1226,14 @@ class Storage extends DBStorage {
 					}
 				}
 			}
+
+			$result = $this->query("SELECT * FROM m_product_watches WHERE user_id = $this->userId");
+			$tableHandler = $this->tableHandler('product_watches');
+			while ($row = mysqli_fetch_assoc($result)) {
+				$modelId = $tableHandler->deriveModelIdFromStorageRecord('product_watches', $row);
+				$modelRecords['product_watches'][$modelId] = $tableHandler->mapStorageRecordToModelRecord('product_watches', $row, $modelId);
+			}
+
 		}
 
 		// var_dump($modelRecords);
@@ -1214,6 +1265,7 @@ function makeDb($userId, $clientUserId) {
 		'users' => UsersTableHandler,
 		'products' => ProductsTableHandler,
 		'product_variants' => ProductVariantsTableHandler,
+		'product_watches' => ProductWatchesTableHandler,
 		'decisions' => DecisionsTableHandler,
 		'decision_elements' => DecisionElementsTableHandler,
 		'sessions' => SessionsTableHandler,
