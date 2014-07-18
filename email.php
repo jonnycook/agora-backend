@@ -2,10 +2,12 @@
 
 require_once('includes/swift/swift_required.php');
 
+$email = $_POST['from']['email'];
+$name = $_POST['from']['name'];
 $msg = Swift_Message::newInstance(); 
 $msg->setEncoder(Swift_Encoding::get8BitEncoding());
 $msg->setSubject($_POST['subject']);
-$msg->setFrom(array($_POST['from']['name'] => $_POST['from']['email']));
+$msg->setFrom(array($email => $name));
 $msg->setTo($_POST['to']);
 $msg->setContentType("text/html");
 $msg->setBody($_POST['body']);
