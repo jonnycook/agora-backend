@@ -613,6 +613,8 @@ class UsersTableHandler extends SqlTableHandler {
 			'tutorials' => $storageRecord['tutorials'],
 			'user_colors' => $storageRecord['user_colors'],
 			'tutorial_step' => $storageRecord['tutorial_step'],
+			'email' => $storageRecord['email'],
+			'alerts_email' => $storageRecord['alerts_email'],
 		);
 	}
 }
