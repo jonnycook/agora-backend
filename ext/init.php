@@ -569,6 +569,7 @@ class ProductWatchesTableHandler extends SqlTableHandler {
 		switch ($field) {
 			case 'product_id': return $this->db->resolveIdToStorageId('products', $value);
 			case 'enable_threshold': return $value ? 1 : 0;
+			case 'enabled': return $value ? 1 : 0;
 			case 'enable_stock': return $value ? 1 : 0;
 			case 'enable_increment': return $value ? 1 : 0;
 			case 'seen': return $value ? 1 : 0;
@@ -595,6 +596,7 @@ class ProductWatchesTableHandler extends SqlTableHandler {
 			'watch_condition' => $storageRecord['watch_condition'],
 			'seen' => $storageRecord['seen'],
 			'index' => $storageRecord['index'],
+			'enabled' => $storageRecord['enabled'],
 		);
 	}
 }
