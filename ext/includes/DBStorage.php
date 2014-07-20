@@ -67,14 +67,14 @@ abstract class SqlTableHandler extends TableHandler {
 		return implode(', ', $setQueryPart);
 	}
 
+	protected function insertValues() { return array(); }
+
 	//
 	protected function validate($storageTable, $storageRecord) { return true; }
 	public static function modelTableName() { throw new Exception("Must be defined"); }
 	protected function storageTableHasUserIdField() { return false; }
 	protected function storageTableHasCreatorIdField() { return false; }
 	public function storageLocationToModelId($storageTable, $storageId) { return $storageId; }
-
-
 
 	// model to storage
 	public static function unpackStorageLocationFromModelId($id) { return array(static::modelTableName(), $id); }
@@ -210,6 +210,7 @@ abstract class SqlTableHandler extends TableHandler {
 	protected function executeInsert() {
 		global $mysqli;
 		$storageRecord = $this->storageRecord = $this->mapModelRecordToStorageRecord(true);
+		$storageRecord = array_merge($storageRecord, $this->insertValues());
 
 		// if ($this->validate($this->storageTable, $storageRecord)) {
 			if (is_array($this->storageId)) {
@@ -356,7 +357,6 @@ abstract class DBStorage {
 	public function finalId($table, $id) {
 		return self::isATemporaryId($id) ? $this->temporaryToModelId[$table][$id] : $id;
 	}
-
 
 	public function set($table, $id, $field, $value) {
 		$this->changes[$table][$id][$field] = $value;

@@ -127,8 +127,12 @@ if ($db->changes) {
 	$theChanges = array();
 	foreach ($db->changes as $table => $changes) {
 		foreach ($changes as $id => $changeType) {
-			$id = $db->storage->finalId($table, $id);
-			$theChanges[$table][$id] = $changeType == 'updated';
+			$finalId = $db->storage->finalId($table, $id);
+			$theChanges[$table][$finalId] = $changeType == 'updated';
+			
+			if ($db->return[$table][$id]) {
+				$return[$table][] = 'G' . $finalId;
+			}
 		}
 	}
 
@@ -164,11 +168,15 @@ if ($db->changes) {
 	}
 }
 
-
 $response = array('status' => 'ok');
 if ($responseChanges) {
 	$response['changes'] = $responseChanges;
 }
+
+if ($return) {
+	$response['return'] = $return;
+}
+
 if ($clientId != 'Carl Sagan') {
 	$response['updateToken'] = newUpdateToken($clientUserId, $clientId);
 }

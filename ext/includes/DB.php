@@ -97,6 +97,10 @@ class DB {
 					if (self::isLocalId($id)) {
 						$localId = $id;
 						$id = $this->id($tableName, $localId);
+
+						if (self::$models[$tableName]['returnInsert']) {
+							$this->return[$tableName][$id] = true;
+						}
 					}
 					else {
 						$id = self::convertGlobalId($id);
