@@ -7,7 +7,7 @@ $user = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT click_id, converted FRO
 
 if (!$user['converted']) {
 	$ch = curl_init("http://api.socialingot.com/postback/agora/?sid=$user[click_id]");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	// curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_exec($ch);
 	mysqli_query($mysqli, "UPDATE m_users SET converted = 1 WHERE id = $userId");
 }
