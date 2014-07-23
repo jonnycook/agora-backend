@@ -57,7 +57,7 @@ else {
 		}
 	}
 	function setUserId($id) {
-		setcookie('userId', encryptString($id, '$!|i8>-8[5~WAaE'), time() + 60*60*24*30*3, '/');
+		setcookie('userId', encryptString($id, '$!|i8>-8[5~WAaE'), time() + 60*60*24*30*3, '/', '.agora.sh');
 	}
 }
 
