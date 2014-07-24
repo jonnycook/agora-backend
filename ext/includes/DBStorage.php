@@ -250,7 +250,7 @@ abstract class SqlTableHandler extends TableHandler {
 			foreach ($this->modelRecord as $field => &$value) {
 				if ($value) {
 					if ($this->db->db->isFk(static::modelTableName(), $field)) {
-						$referentTable = DB::$models[static::modelTableName()]['referents'][$field];
+						$referentTable = $this->db->db->model(static::modelTableName())['model']['referents'][$field];
 						if (!$referentTable) throw new Exception("POOP");
 						if (is_callable($referentTable)) {
 							$referentTable = $referentTable($this->modelRecord);
@@ -288,18 +288,15 @@ abstract class DBStorage {
 		return $id[0] == 'T';
 	}
 
-	public function __construct($userId, $clientUserId, $tableHandlerClasses) {
+	public function __construct($userId, $clientUserId) {
 		$this->db = array();
 		$this->userId = $userId;
 		$this->clientUserId = $clientUserId;
-
-		$this->tableHandlerClasses = $tableHandlerClasses;
 
 		$db = $this;
 		TableHandler::$onInsert = function($modelTable, $temporaryId, $modelId) use ($db) {
 			$db->temporaryToModelId[$modelTable][$temporaryId] = $modelId;
 		};
-
 	}
 
 	public static function query($sql) {
@@ -426,18 +423,23 @@ abstract class DBStorage {
 	}
 
 	public function tableHandler($table) {
-		$class = $this->tableHandlerClasses[$table];
-		if ($class) {
-			if (class_exists($class, false)) {
-				return new $class($this, $this->userId, $this->clientUserId);
-			}
-			else {
-				throw new Exception("Tabler handler $class for $table doesn't exist");
-			}
-		}
-		else {
-			throw new Exception("No table handler for table `$table`");
-		}
+		$class = $this->db->model($table)['class'];
+		return new $class($this, $this->userId, $this->clientUserId);
+		// $modelManifest = $this->modelManifests[$table];
+		// if ($modelManifest) {
+		// 	$class = $modelManifest['class']
+		// 	return new $class($this, $this->userId, $this->clientUserId);
+		// }
+		// else {
+		// 	$manifestFilePath = __DIR__."/../model/$table/manfiest.php";
+		// 	if (file_exists($manifestFilePath)) {
+		// 		$this->modelManifests[$table] = include($manifestFilePath);
+		// 		return $this->tableHandler($table);
+		// 	}
+		// 	else {
+		// 		throw new Exception("No table handler for table `$table`");
+		// 	}
+		// }
 	}
 
 	public function save() {

@@ -19,6 +19,22 @@ class DB {
 		$this->storage->db = $this;
 	}
 
+	public function model($name) {
+		$modelManifest = $this->modelManifests[$name];
+		if ($modelManifest) {
+			return $modelManifest;
+		}
+		else {
+			$manifestFilePath = __DIR__."/../models/$name/manifest.php";
+			if (file_exists($manifestFilePath)) {
+				return $this->modelManifests[$name] = include($manifestFilePath);
+			}
+			else {
+				throw new Exception("No model named `$name`");
+			}
+		}
+	}
+
 	private function set($table, $id, $field, $value) {
 		$this->storage->set($table, $id, $field, $value);
 		$this->changes[$table][$id] = 'updated';
@@ -66,12 +82,12 @@ class DB {
 		}
 	}
 
-	public static function isFk($table, $field) {
-		return isset(self::$models[$table]['referents'][$field]);
+	public function isFk($table, $field) {
+		return isset($this->model($table)['model']['referents'][$field]);
 	}
 
 	public function referentId($table, $record, $field, $localId) {
-		$referentTable = self::$models[$table]['referents'][$field];
+		$referentTable = $this->model($table)['model']['referents'][$field];
 		if (is_callable($referentTable)) {
 			$referentTable = $referentTable($record);
 		}
@@ -98,7 +114,7 @@ class DB {
 						$localId = $id;
 						$id = $this->id($tableName, $localId);
 
-						if (self::$models[$tableName]['returnInsert']) {
+						if ($this->model($tableName)['model']['returnInsert']) {
 							$this->return[$tableName][$id] = true;
 						}
 					}
