@@ -19,6 +19,7 @@ class FeedbackItemsTableHandler extends SqlTableHandler {
 			$modelRecord['element_type'] = $storageRecord['element_type'];
 			$modelRecord['element_id'] = $this->resolveValue('element_id', $modelRecord, $storageRecord['element_id']);
 		}
+		
 
 		return $modelRecord;
 	}
