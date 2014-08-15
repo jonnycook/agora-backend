@@ -6,9 +6,9 @@ class ListElementsTableHandler extends ElementsTableHandler {
 	public static function parentTable() { return 'lists'; }
 }
 
-
 return array(
 	'class' => ListElementsTableHandler,
+	'modelName' => 'ListElement',
 	'model' => array(
 		'referents' => array(
 			'element_id' => map,

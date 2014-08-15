@@ -3,7 +3,7 @@
 require_once(__DIR__.'/../../includes/header.php');
 require_once(__DIR__.'/../../includes/ws.php');
 
-
+// unused
 function createShare($user, $withUser, $object, $params=null) {
 	global $mysqli;
 	$userId = $user['id'];
@@ -29,7 +29,7 @@ function createShare($user, $withUser, $object, $params=null) {
 		}
 	}
 
-
+	// *collaboration*
 	// $user = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_users WHERE id = $userId"));
 	$userName = $user['name'] ? $user['name'] : $user['email'];
 	$withUserName = $withUser['name'] ? $withUser['name'] : $withUser['email'];

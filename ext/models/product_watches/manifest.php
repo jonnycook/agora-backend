@@ -78,6 +78,7 @@ class ProductWatchesTableHandler extends SqlTableHandler {
 
 return array(
 	'class' => ProductWatchesTableHandler,
+	'modelName' => 'ProductWatch',
 	'model' => array(
 		'returnInsert' => true,
 		// 'distinct' => array('product_id', 'variant'),

@@ -9,6 +9,7 @@ class RootElementsTableHandler extends ElementsTableHandler {
 
 return array(
 	'class' => RootElementsTableHandler,
+	'modelName' => 'RootElement',
 	'model' => array(
 		'referents' => array(
 			'element_id' => 'map',

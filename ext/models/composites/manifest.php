@@ -6,5 +6,6 @@ class CompositesTableHandler extends SqlTableHandler {
 }
 
 return array(
-	'class' => CompositesTableHandler
+	'class' => CompositesTableHandler,
+	'modelName' => 'Composite',
 );

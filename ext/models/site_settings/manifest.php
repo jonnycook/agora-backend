@@ -11,4 +11,5 @@ class SiteSettingsTableHandler extends SqlTableHandler {
 
 return array(
 	'site_settings' => SiteSettingsTableHandler,
+	'modelName' => 'SiteSetting',
 );

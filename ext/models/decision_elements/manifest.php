@@ -6,13 +6,7 @@ class DecisionElementsTableHandler extends SqlTableHandler {
 	public function storageTableHasCreatorIdField() { return false; }
 
 	public function mapModelFieldToStorageField($field, $value) {
-		if ($field == 'decision_id') {
-			return $this->db->resolveIdToStorageId('decisions', $value);
-		}
-		else if ($field == 'list_element_id') {
-			return $this->db->resolveIdToStorageId('list_elements', $value);
-		}
-		else if ($field == 'selected') {
+		if ($field == 'selected') {
 			return $value ? 1 : 0;
 		}
 		else if ($field == 'dismissed') {
@@ -37,6 +31,7 @@ class DecisionElementsTableHandler extends SqlTableHandler {
 
 return array(
 	'class' => DecisionElementsTableHandler,
+	'modelName' => 'DecisionElement',
 	'model' => array(
 		'referents' => array(
 			'decision_id' => 'decisions',

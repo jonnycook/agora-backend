@@ -55,6 +55,7 @@ class CompositeSlotsTableHandler extends SqlTableHandler {
 
 return array(
 	'class' => CompositeSlotsTableHandler,
+	'modelName' => 'CompositeSlot',
 	'model' => array(
 		'referents' => array(
 			'element_id' => map,

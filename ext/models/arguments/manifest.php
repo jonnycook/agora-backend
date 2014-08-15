@@ -4,15 +4,6 @@ class ArgumentsTableHandler extends SqlTableHandler {
 	public static function modelTableName() { return 'arguments'; }
 	public function storageTableHasUserIdField() { return true; }
 
-
-	protected function mapModelFieldToStorageField($field, $value) {
-		if ($field == 'element_id' && $value) {
-			return $this->db->resolveIdToStorageId(map($this->modelRecord), $value);
-		}
-
-		return $value;
-	} 
-
 	public function mapStorageRecordToModelRecord($storageTable, $storageRecord, $modelId) {
 		$modelRecord = array(
 			'thought' => $storageRecord['thought'],
@@ -22,11 +13,8 @@ class ArgumentsTableHandler extends SqlTableHandler {
 		);
 
 		if ($storageRecord['element_type']) {
-			$elementTable = modelNameToTableName($storageRecord['element_type']);
-			$modelRecord += array(
-				'element_type' => $storageRecord['element_type'],
-				'element_id' => $this->db->tableHandler($elementTable)->storageLocationToModelId($elementTable, $storageRecord['element_id']),
-			);
+			$modelRecord['element_type'] = $storageRecord['element_type'];
+			$modelRecord['element_id'] = $this->resolveValue('element_id', $modelRecord, $storageRecord['element_id']);
 		}
 
 		return $modelRecord;
@@ -36,6 +24,7 @@ class ArgumentsTableHandler extends SqlTableHandler {
 
 return array(
 	'class' => ArgumentsTableHandler,
+	'modelName' => 'Argument',
 	'model' => array(
 		'referents' => array(
 			'element_id' => map,

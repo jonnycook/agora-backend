@@ -57,14 +57,7 @@ class DB {
 		}
 		foreach ($record as $field => &$value) {
 			if ($value) {
-				if ($this->isFk($table, $field)) {
-					if (self::isLocalId($value)) {
-						$value = $this->referentId($table, $record, $field, $value);
-					}
-					else {
-						$value = self::convertGlobalId($value);
-					}
-				}
+				$value = $this->transformValueIn($table, $record, $field, $value);
 			}
 		}
 		unset($value);
@@ -83,7 +76,7 @@ class DB {
 	}
 
 	public function isFk($table, $field) {
-		return isset($this->model($table)['model']['referents'][$field]);
+		return $this->model($table)['model']['referents'][$field];
 	}
 
 	public function referentId($table, $record, $field, $localId) {
@@ -92,7 +85,48 @@ class DB {
 			$referentTable = $referentTable($record);
 		}
 
-		return $this->id($referentTable, $localId, $record);
+		return $this->id($referentTable, $localId);
+	}
+
+	private function transformValueIn($tableName, $record, $field, $value) {
+		if ($this->isFk($tableName, $field)) {
+			if ($this->model($tableName)['model']['types'][$field] == 'list') {
+				$ids = explode(' ', $value);
+				$newIds = array();
+				foreach ($ids as $id) {
+					if (self::isLocalId($id)) {
+						$newIds[] = $this->referentId($tableName, $record, $field, $id);
+					}
+					else {
+						$newIds[] = self::convertGlobalId($id);
+					}
+				}
+				$value = implode(' ', $newIds);
+			}
+			else {
+				if (self::isLocalId($value)) {
+					$value = $this->referentId($tableName, $record, $field, $value);
+				}
+				else {
+					$value = self::convertGlobalId($value);
+				}
+			}
+		}
+		return $value;
+	}
+
+	private function transformValueOut($tableName, $record, $field, $value) {
+		if ($this->isFk($tableName, $field)) {
+			if ($this->model($tableName)['model']['types'][$field] == 'list') {
+				return implode(' ', array_map(function($id) { return "G$id"; }, explode(' ', $value)));
+			}
+			else {
+				return "G$value";
+			}
+		}
+		else {
+			return $value;
+		}
 	}
 
 	public function execute($input) {
@@ -126,14 +160,7 @@ class DB {
 
 					foreach ($record as $field => $value) {
 						if ($value) {
-							if ($this->isFk($tableName, $field)) {
-								if (self::isLocalId($value)) {
-									$value = $this->referentId($tableName, $record, $field, $value);
-								}
-								else {
-									$value = self::convertGlobalId($value);
-								}
-							}
+							$value = $this->transformValueIn($tableName, $record, $field, $value);
 						}
 						$this->set($tableName, $id, $field, $value);
 					}
@@ -151,9 +178,7 @@ class DB {
 			foreach ($records as $id => $record) {
 				foreach ($record as $field => $value) {
 					if ($value) {
-						if ($this->isFk($table, $field)) {
-							$record[$field] = "G$value";
-						}
+						$record[$field] = $this->transformValueOut($table, $record, $field, $value);
 					}
 				}
 				$data[$table]["G$id"] = $record;

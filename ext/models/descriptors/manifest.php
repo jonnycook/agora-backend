@@ -35,6 +35,7 @@ class DescriptorsTableHandler extends SqlTableHandler {
 
 return array(
 	'class' => DescriptorsTableHandler,
+	'modelName' => 'Descriptor',
 	'model' => array(
 		'referents' => array(
 			'element_id' => map,

@@ -8,6 +8,7 @@ class BeltElementsTableHandler extends ElementsTableHandler {
 
 return array(
 	'class' => BeltElementsTableHandler,
+	'modelName' => 'BeltElement',
 	'model' => array(
 		'referents' => array(
 			'element_id' => map,

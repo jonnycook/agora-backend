@@ -8,6 +8,7 @@ class CompositeElementsTableHandler extends ElementsTableHandler {
 
 return array(
 	'class' => CompositeElementsTableHandler,
+	'modelName' => 'CompositeElement',
 	'model' => array(
 		'referents' => array(
 			'element_id' => map,

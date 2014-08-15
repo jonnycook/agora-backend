@@ -5,10 +5,10 @@ class ObjectReferencesTableHandler extends SqlTableHandler {
 	public function storageTableHasUserIdField() { return true; }
 	public function storageTableHasCreatorIdField() { return true; }
 
-	// public function mapModelFieldToStorageField($field, $value) {
-	// 	return $value;
-	// }
-
+	public function storageRecordToModelRecordMap() {
+		return array('object', 'object_user_id', 'creator_id');
+	}
+	
 	public function mapStorageRecordToModelRecord($storageTable, $storageRecord, $modelId) {
 		return array(
 			'object' => $storageRecord['object'],
@@ -19,5 +19,6 @@ class ObjectReferencesTableHandler extends SqlTableHandler {
 }
 
 return array(
-	'class' => ObjectReferencesTableHandler
+	'class' => ObjectReferencesTableHandler,
+	'modelName' => 'ObjectReference',
 );

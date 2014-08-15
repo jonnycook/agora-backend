@@ -23,6 +23,7 @@ if (!$invitation['accepted_at']) {
 	if ($invitation['action']) {
 		$action = json_decode($invitation['action'], true);
 		if ($action['type'] == 'collaborate') {
+			// *collaboration*
 			$changes['collaborators']["Gp$invitation[id]"] = 'deleted';
 			sendMessage($userId, 'collaborators', array(
 				'userId' => $userId,
@@ -33,6 +34,7 @@ if (!$invitation['accepted_at']) {
 				'clientId' => 'Carl Sagan',
 				'userId' => $invitation['user_id'],
 				'object' => $action['object'],
+				'role' => $action['role'],
 				'withUserId' => $userId
 			));
 		}

@@ -28,6 +28,7 @@ class ProductVariantsTableHandler extends SqlTableHandler {
 
 return array(
 	'class' => ProductVariantsTableHandler,
+	'modelName' => 'ProductVariant',
 	'model' => array(
 		'distinct' => array('product_id', 'variant'),
 		'referents' => array(

@@ -16,6 +16,7 @@ $db = makeDb($userId, null);
 $db->queryByUserId = false;
 
 function getCollaborators($userId, $object) {
+	// *collaboration*
 	global $mysqli;
 	$result = mysqli_query($mysqli, "SELECT * FROM shared WHERE user_id = $userId && object = '$object'");
 	$collaborators = array();
@@ -24,6 +25,7 @@ function getCollaborators($userId, $object) {
 			'object_user_id' => $row['user_id'],
 			'object' => $row['object'],
 			'user_id' => $row['with_user_id'],
+			'role' => $row['role']
 		);
 
 		$collaborators["G$row[user_id].$row[object].$row[user_id]"] = array(
@@ -73,11 +75,14 @@ if ($object == '*') {
 				$withUserName = $userRow['name'] ? $userRow['name'] : $userRow['email'];
 			}
 		}
+
+		// *collaboration*
 		$data['shared_objects']["G$row[id]"] = array(
 			'user_id' => "G$row[user_id]",
 			'with_user_id' => "G$row[with_user_id]",
 			'title' => $row['title'],
 			'object' => $row['object'],
+			'role' => $row['role'],
 			'seen' => $row['seen'],
 			'user_name' => $userName,
 			'with_user_name' => $withUserName,
@@ -89,6 +94,7 @@ if ($object == '*') {
 					'object_user_id' => $row['user_id'],
 					'object' => $row['object'],
 					'user_id' => $row['with_user_id'],
+					'role' => $row['role'],
 				);
 
 				$data['collaborators']["G$row[user_id].$row[object].$row[user_id]"] = array(
@@ -108,6 +114,7 @@ if ($object == '*') {
 			$data['collaborators']["Gp$row[id]"] = array(
 				'object_user_id' => $userId,
 				'object' => $action->object,
+				'role' => $action->role,
 				'pending' => true,
 				'email' => $row['email'],
 				'invitation' => $row['id'],
@@ -142,7 +149,8 @@ else {
 	else throw new Exception("invalid object $object");
 
 	$data = $db->storage->getData(array(
-		'records' => array($model => array($id))
+		'records' => array($model => array($id)),
+		'products' => 'referenced'
 	));
 
 	if ($_GET['claim']) {

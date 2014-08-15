@@ -20,4 +20,5 @@ class UsersTableHandler extends SqlTableHandler {
 
 return array(
 	'class' => UsersTableHandler,
+	'modelName' => 'User',
 );

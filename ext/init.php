@@ -11,22 +11,22 @@ abstract class ElementsTableHandler extends SqlTableHandler {
 	static protected function parentIdField() {}
 	static protected function parentTable() {}
 	static protected function hasParent() { return true; }
-	protected function mapModelFieldToStorageField($field, $value) {
-		if ($field == 'element_id') {
-			if ($value) {
-				$id = $this->db->resolveIdToStorageId(map($this->modelRecord), $value);	
-				if (!$id) {
-					throw "not id $field $value";
-				}
-				return $id;
-			} 
-		}
-		else if ($field == static::parentIdField()) {
-			return $this->db->resolveIdToStorageId(static::parentTable(), $value);
-		}
+	// protected function mapModelFieldToStorageField($field, $value) {
+	// 	if ($field == 'element_id') {
+	// 		if ($value) {
+	// 			$id = $this->db->resolveIdToStorageId(map($this->modelRecord), $value);	
+	// 			if (!$id) {
+	// 				throw "not id $field $value";
+	// 			}
+	// 			return $id;
+	// 		} 
+	// 	}
+	// 	else if ($field == static::parentIdField()) {
+	// 		return $this->db->resolveIdToStorageId(static::parentTable(), $value);
+	// 	}
 
-		return $value;
-	}
+	// 	return $value;
+	// }
 
 	public function mapStorageRecordToModelRecord($storageTable, $storageRecord, $modelId) {
 		$modelRecord = array(
@@ -127,6 +127,13 @@ function modelNameToTableName($type) {
 		case 'DecisionElement': return 'decision_elements';
 		case 'User': return 'users';
 		case 'ObjectReference': return 'object_references';
+		case 'FeedbackPage': return 'feedback_pages';
+		case 'FeedbackItem': return 'feedback_items';
+		case 'FeedbackItemReply': return 'feedback_item_replies';
+		case 'FeedbackComment': return 'feedback_comments';
+		case 'FeedbackCommentReply': return 'feedback_comment_replies';
+		case 'FeedbackPageReferenceItem': return 'feedback_page_reference_items';
+		case 'DecisionSuggestion': return 'decision_suggestions';
 	}
 	throw new Exception("No mapping for '$type'");
 }
@@ -195,69 +202,121 @@ class Storage extends DBStorage {
 					}
 
 					if ($table == 'list_elements') {
-						$listElementIds[] = $row['id'];
+						$recordsQuery['DecisionElement'][] = array('list_element_id', $row['id']);
 					}
 				}
 			}
 
 			unset($elementsQueue);
 
-			$allRecordsQuery = array();
+			// $allRecordsQuery = array();
 
 			do {
 				$newRecordsQuery = array();
 				foreach ($recordsQuery as $modelName => $ids) {
-					$allRecordsQuery[$modelName] = array_merge((array)$allRecordsQuery[$modelName], $ids);
+					$idsByField = array();
+					foreach ($ids as $id) {
+						if (is_array($id)) {
+							$idsByField[$id[0]][] = $id[1];
+						}
+						else {
+							$idsByField['id'][] = $id;
+						}
+					}
+					// $allRecordsQuery[$modelName] = array_merge((array)$allRecordsQuery[$modelName], $ids);
 
 					$table = modelNameToTableName($modelName);
 
-					$query = "SELECT * FROM m_$table WHERE id IN (" . implode(', ', $ids) . ')';
-					$result = $this->query($query);
-					$tableHandler = $this->tableHandler($table);
+					foreach ($idsByField as $idField => $ids) {
+						$query = "SELECT * FROM m_$table WHERE $idField IN (" . implode(', ', $ids) . ')';
+						$result = $this->query($query);
+						$tableHandler = $this->tableHandler($table);
 
-					while ($row = mysqli_fetch_assoc($result)) {
-						$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
-						$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
-						switch ($table) {
-							case 'product_variants':
-								$productIds[] = $row['product_id'];
-								break;
+						while ($row = mysqli_fetch_assoc($result)) {
+							$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
+							$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
+							switch ($table) {
+								case 'product_variants':
+									$productIds[] = $row['product_id'];
+									break;
 
-							case 'decisions':
-								$newRecordsQuery['List'][] = $row['list_id'];
-								// $elementsQueue[] = array('decision_elements', 'decision_id', $row['id']);
-								break;
+								case 'decisions':
+									$newRecordsQuery['List'][] = $row['list_id'];
+									if ($row['feedback_page_id']) {
+										$newRecordsQuery['FeedbackPage'][] = $row['feedback_page_id'];
+									}
 
-							case 'descriptors':
-								if ($row['element_id']) {
-									$newRecordsQuery[$row['element_type']][] = $row['element_id'];
-								}
-								break;
+									$newRecordsQuery['FeedbackPage'][] = array('decision_id', $row['id']);
+									$newRecordsQuery['DecisionSuggestion'][] = array('decision_id', $row['id']);
+									break;
 
-							case 'competitive_lists':
-								$elementsQueue[] = array('competitive_list_elements', 'competitive_list_id', $row['id']);
-								break;
+								case 'feedback_pages':
+									$newRecordsQuery['FeedbackItem'][] = array('feedback_page_id', $row['id']);
+									$newRecordsQuery['FeedbackComment'][] = array('feedback_page_id', $row['id']);
+									$newRecordsQuery['FeedbackPageReferenceItem'][] = array('feedback_page_id', $row['id']);
+									break;
 
-							case 'lists':
-								$elementsQueue[] = array('list_elements', 'list_id', $row['id']);
-								break;
+								case 'feedback_page_reference_items':
+									if ($row['type'] == 0) {
+										$productIds[] = $row['item_id'];
+									}
+									else if ($row['type'] == 1) {
+										$newRecordsQuery['ProductVariant'][] = $row['item_id'];
+									}
+									break;
 
-							case 'belts':
-								$elementsQueue[] = array('belt_elements', 'belt_id', $row['id']);
-								break;
+								case 'decision_suggestions':
+								case 'feedback_items':
+								case 'feedback_comments':
+									if ($row['element_type']) {
+										if ($row['element_type'] == 'Product') {
+											$productIds[] = $row['element_id'];
+										}
+										else {
+											$newRecordsQuery[$row['element_type']][] = $row['element_id'];
+										}
+									}
 
-							case 'bundles':
-								$elementsQueue[] = array('bundle_elements', 'bundle_id', $row['id']);
-								break;
+									if ($table == 'feedback_items') {
+										$newRecordsQuery['FeedbackItemReply'][] = array('feedback_item_id', $row['id']);
+									}
+									else if ($table == 'feedback_comments') {
+										$newRecordsQuery['FeedbackCommentReply'][] = array('feedback_comment_id', $row['id']);
+									}
+									break;
 
-							case 'sessions':
-								$elementsQueue[] = array('session_elements', 'session_id', $row['id']);
-								break;
 
-							case 'composites':
-								$elementsQueue[] = array('composite_elements', 'composite_id', $row['id']);
-								$elementsQueue[] = array('composite_slots', 'composite_id', $row['id']);
-								break;
+								case 'descriptors':
+									if ($row['element_id']) {
+										$newRecordsQuery[$row['element_type']][] = $row['element_id'];
+									}
+									break;
+
+								case 'competitive_lists':
+									$elementsQueue[] = array('competitive_list_elements', 'competitive_list_id', $row['id']);
+									break;
+
+								case 'lists':
+									$elementsQueue[] = array('list_elements', 'list_id', $row['id']);
+									break;
+
+								case 'belts':
+									$elementsQueue[] = array('belt_elements', 'belt_id', $row['id']);
+									break;
+
+								case 'bundles':
+									$elementsQueue[] = array('bundle_elements', 'bundle_id', $row['id']);
+									break;
+
+								case 'sessions':
+									$elementsQueue[] = array('session_elements', 'session_id', $row['id']);
+									break;
+
+								case 'composites':
+									$elementsQueue[] = array('composite_elements', 'composite_id', $row['id']);
+									$elementsQueue[] = array('composite_slots', 'composite_id', $row['id']);
+									break;
+							}
 						}
 					}
 					// var_dump($newRecordsQuery);
@@ -285,7 +344,7 @@ class Storage extends DBStorage {
 				if ($productIds) {
 					$result = $this->query("SELECT * FROM m_products WHERE id IN (" . implode(', ', $productIds) . ')');
 					while ($row = mysqli_fetch_assoc($result)) {
-						$allRecordsQuery['Product'][] = $row['id'];
+						// $allRecordsQuery['Product'][] = $row['id'];
 						$modelId = $tableHandler->deriveModelIdFromStorageRecord('products', $row);
 						$modelRecords['products'][$modelId] = $tableHandler->mapStorageRecordToModelRecord('products', $row, $modelId);
 					}
@@ -295,7 +354,7 @@ class Storage extends DBStorage {
 				$result = $this->query("SELECT * FROM user_products WHERE user_id = $this->userId");
 				while ($row = mysqli_fetch_assoc($result)) {
 					$row['id'] = $row['product_id'];
-					$allRecordsQuery['Product'][] = $row['id'];
+					// $allRecordsQuery['Product'][] = $row['id'];
 					$modelId = $tableHandler->deriveModelIdFromStorageRecord('products', $row);
 					$modelRecords['products'][$modelId] = $tableHandler->mapStorageRecordToModelRecord('products', $row, $modelId);
 				}
@@ -321,40 +380,43 @@ class Storage extends DBStorage {
 			}
 		}
 
-		foreach ($allRecordsQuery as $table => &$ids) {
-			sort($ids);
-		}
-		unset($ids);
+		// foreach ($allRecordsQuery as $table => &$ids) {
+		// 	sort($ids);
+		// }
+		// unset($ids);
 
 		if ($args['auxiliary']) {
-			foreach (array('data', 'feelings', 'arguments') as $table) {
-				$query = [];
+			// foreach (array('data', 'feelings', 'arguments') as $table) {
+			// 	$query = [];
 
-				foreach ($allRecordsQuery as $modelName => $ids) {
-					foreach ($ids as $id) {
-						$query[] = "element_type = '$modelName' && element_id = '$id' && user_id = $this->userId";
-					}
+			// 	foreach ($allRecordsQuery as $modelName => $ids) {
+			// 		foreach ($ids as $id) {
+			// 			$query[] = "element_type = '$modelName' && element_id = '$id' && user_id = $this->userId";
+			// 		}
+			// 	}
+
+			// 	// var_dump($query);
+
+			// 	if ($query) {
+			// 		$query = '(' . implode(') || (', $query) . ')';
+
+			// 		$result = $this->query("SELECT * FROM m_$table WHERE $query");
+			// 		$tableHandler = $this->tableHandler($table);
+			// 		while ($row = mysqli_fetch_assoc($result)) {
+			// 			$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
+			// 			$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
+			// 		}
+			// 	}
+			// }
+
+			$tables = array('data', 'feelings', 'arguments');
+			foreach ($tables as $table) {
+				$result = $this->query("SELECT * FROM m_$table WHERE user_id = $this->userId");
+				$tableHandler = $this->tableHandler($table);
+				while ($row = mysqli_fetch_assoc($result)) {
+					$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
+					$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
 				}
-
-				// var_dump($query);
-
-				if ($query) {
-					$query = '(' . implode(') || (', $query) . ')';
-
-					$result = $this->query("SELECT * FROM m_$table WHERE $query");
-					$tableHandler = $this->tableHandler($table);
-					while ($row = mysqli_fetch_assoc($result)) {
-						$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
-						$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
-					}
-				}
-			}
-
-			$result = $this->query("SELECT * FROM m_product_watches WHERE user_id = $this->userId");
-			$tableHandler = $this->tableHandler('product_watches');
-			while ($row = mysqli_fetch_assoc($result)) {
-				$modelId = $tableHandler->deriveModelIdFromStorageRecord('product_watches', $row);
-				$modelRecords['product_watches'][$modelId] = $tableHandler->mapStorageRecordToModelRecord('product_watches', $row, $modelId);
 			}
 		}
 

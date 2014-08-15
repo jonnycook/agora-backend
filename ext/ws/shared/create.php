@@ -7,6 +7,13 @@ $object = mysqli_real_escape_string($mysqli, $_POST['object']);
 
 $title = $_POST['title'];
 $message = $_POST['message'];
+$contributor = $_POST['contributor'];
+if ($contributor) {
+	$role = 1;
+}
+else {
+	$role = 0;
+}
 
 if ($_POST['withUserId']) {
 	$withUser = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_users WHERE id = $_POST[withUserId]"));
@@ -76,7 +83,9 @@ if ($withUser) {
 		$sqlTitle = 'NULL';
 	}
 
-	mysqli_query($mysqli, "INSERT INTO shared SET user_id = $userId, object = '$object', title = $sqlTitle, with_user_id = $withUser[id], created_at = UTC_TIMESTAMP()") or die(mysqli_error($mysqli));
+
+	// *collaboration*
+	mysqli_query($mysqli, "INSERT INTO shared SET user_id = $userId, object = '$object', title = $sqlTitle, with_user_id = $withUser[id], role = $role, created_at = UTC_TIMESTAMP()") or die(mysqli_error($mysqli));
 	$id = mysqli_insert_id($mysqli);
 
 	$record = array(
@@ -87,6 +96,7 @@ if ($withUser) {
 		'seen' => 0,
 		'user_name' => $userName,
 		'with_user_name' => $withUserName,
+		'role' => $role,
 	);
 
 	if ($title) {
@@ -116,7 +126,8 @@ if ($withUser) {
 	$collaborators["G$userId.$object.$withUser[id]"] = array(
 		'user_id' => $withUser['id'],
 		'object' => $object,
-		'object_user_id' => $userId
+		'object_user_id' => $userId,
+		'role' => $role,
 	);
 
 	sendMessage($userId, 'collaborators', array(
@@ -144,10 +155,10 @@ else {
 
 	$user = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_users WHERE id = $userId"));
 
-
+	// *collaboration*
 	$userName = $user['name'];
 	$key = md5($userId . time() . 'I like popsicles.' . rand());
-	$action = json_encode(array('type' => 'collaborate', 'object' => $object));
+	$action = json_encode(array('type' => 'collaborate', 'object' => $object, 'role' => $role));
 	mysqli_query($mysqli, "INSERT INTO invitations SET 
 		`key` = '$key',
 		user_id = $userId, 
@@ -162,6 +173,7 @@ else {
 		'pending' => true,
 		'email' => $_POST['with'],
 		'invitation' => $invitationId,
+		'role' => $role,
 	);
 	sendMessage($userId, 'collaborators', array(
 		'userId' => $userId,

@@ -1,18 +1,18 @@
 <?php
 
-class DataTableHandler extends SqlTableHandler {
-	public static function modelTableName() { return 'data'; }
+class FeedbackItemsTableHandler extends SqlTableHandler {
+	public static function modelTableName() { return 'feedback_items'; }
 	public function storageTableHasUserIdField() { return true; }
 	public function storageTableHasCreatorIdField() { return true; }
 
 	public function mapStorageRecordToModelRecord($storageTable, $storageRecord, $modelId) {
 		$modelRecord = array(
-			'url' => $storageRecord['url'],
-			'text' => $storageRecord['text'],
-			'type' => $storageRecord['type'],
 			'comment' => $storageRecord['comment'],
-			'title' => $storageRecord['title'],
 			'creator_id' => $storageRecord['creator_id'],
+			'created_at' => $storageRecord['created_at'],
+			'value' => $storageRecord['value'],
+			'type' => $storageRecord['type'],
+			'feedback_page_id' => $this->db->tableHandler('feedback_pages')->storageLocationToModelId('feedback_pages', $storageRecord['feedback_page_id']),
 		);
 
 		if ($storageRecord['element_type']) {
@@ -24,13 +24,13 @@ class DataTableHandler extends SqlTableHandler {
 	}
 }
 
-
 return array(
-	'class' => DataTableHandler,
-	'modelName' => 'Datum',
+	'class' => FeedbackItemsTableHandler,
+	'modelName' => 'FeedbackItem',
 	'model' => array(
 		'referents' => array(
 			'element_id' => map,
+			'feedback_page_id' => 'feedback_pages',
 		)
 	),
 );

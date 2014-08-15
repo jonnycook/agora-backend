@@ -26,5 +26,6 @@ class BeltsTableHandler extends SqlTableHandler {
 }
 
 return array(
-	'class' => BeltsTableHandler
+	'class' => BeltsTableHandler,
+	'modelName' => 'Belt',
 );

@@ -8,6 +8,7 @@ class SessionElementsTableHandler extends ElementsTableHandler {
 
 return array(
 	'class' => SessionElementsTableHandler
+	'modelName' => 'SessionElement',
 	'model' => array(
 		'referents' => array(
 			'element_id' => 'map',

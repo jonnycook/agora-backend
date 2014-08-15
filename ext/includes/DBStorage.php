@@ -80,16 +80,45 @@ abstract class SqlTableHandler extends TableHandler {
 	public static function unpackStorageLocationFromModelId($id) { return array(static::modelTableName(), $id); }
 	public static function deriveStorageTableFromModelRecord($modelRecord) { return static::modelTableName(); }
 	public function primaryStorageKeysFromModelRecord($modelRecord) { return null; }
-	protected function mapModelFieldToStorageField($field, $value) { return $value; }
+	protected function mapModelFieldToStorageField($field, $value) {
+		if ($value && $this->db->db->isFk(static::modelTableName(), $field)) {
+			$modelConf = $this->db->db->model(static::modelTableName())['model'];
+			$referentTable = $modelConf['referents'][$field];
+			if (!$referentTable) throw new Exception("POOP");
+			if (is_callable($referentTable)) {
+				$referentTable = $referentTable($this->modelRecord);
+			}
+			if (!$referentTable) {
+				throw new Exception("POOP");
+			}
+
+			if ($modelConf['types'][$field] == 'list') {
+				$ids = explode(' ', $value);
+				$newIds = array();
+				foreach ($ids as $id) {
+					$newIds[] = $this->db->resolveIdToStorageId($referentTable, $id);
+				}
+				$value = implode(' ' , $newIds);
+			}
+			else {
+				$value = $this->db->resolveIdToStorageId($referentTable, $value);
+			}
+		}
+
+		return $value;
+	}
+
 	protected function mapModelRecordToStorageRecord($onInsert = false) {
 		$storageRecord = array();
 		foreach ($this->modelRecord as $field => $value) {
 			$mapped = $this->mapModelFieldToStorageField($field, $value);
-			if (is_array($mapped)) {
-				$storageRecord = array_merge($storageRecord, $mapped);
-			}
-			else {
-				$storageRecord[$field] = $mapped;
+			if ($mapped !== false) {
+				if (is_array($mapped)) {
+					$storageRecord = array_merge($storageRecord, $mapped);
+				}
+				else {
+					$storageRecord[$field] = $mapped;
+				}	
 			}
 		}
 
@@ -250,7 +279,8 @@ abstract class SqlTableHandler extends TableHandler {
 			foreach ($this->modelRecord as $field => &$value) {
 				if ($value) {
 					if ($this->db->db->isFk(static::modelTableName(), $field)) {
-						$referentTable = $this->db->db->model(static::modelTableName())['model']['referents'][$field];
+						$modelConf = $this->db->db->model(static::modelTableName())['model'];
+						$referentTable = $modelConf['referents'][$field];
 						if (!$referentTable) throw new Exception("POOP");
 						if (is_callable($referentTable)) {
 							$referentTable = $referentTable($this->modelRecord);
@@ -259,7 +289,17 @@ abstract class SqlTableHandler extends TableHandler {
 							throw new Exception("POOP");
 						}
 
-						$value = $this->db->resolveId($referentTable, $value);
+						if ($modelConf['types'][$field] == 'list') {
+							$ids = explode(' ', $value);
+							$newIds = array();
+							foreach ($ids as $id) {
+								$newIds[] = $this->db->resolveId($referentTable, $id);
+							}
+							$value = implode(' ' , $newIds);
+						}
+						else {
+							$value = $this->db->resolveId($referentTable, $value);
+						}
 					}
 				}
 			}
@@ -279,6 +319,34 @@ abstract class SqlTableHandler extends TableHandler {
 				$this->executeUpdate();
 			}
 		}
+	}
+
+	protected function resolveValue($field, $modelRecord, $value) {
+		if ($this->db->db->isFk(static::modelTableName(), $field)) {
+			$modelConf = $this->db->db->model(static::modelTableName())['model'];
+			$referentTable = $modelConf['referents'][$field];
+			if (!$referentTable) throw new Exception("POOP");
+			if (is_callable($referentTable)) {
+				$referentTable = $referentTable($modelRecord);
+			}
+			if (!$referentTable) {
+				throw new Exception("POOP");
+			}
+
+			if ($modelConf['types'][$field] == 'list') {
+				$ids = explode(' ', $value);
+				$newIds = array();
+				foreach ($ids as $id) {
+					$newIds[] = $this->db->tableHandler($referentTable)->storageLocationToModelId($referentTable, $id);
+				}
+				$value = implode(' ' , $newIds);
+			}
+			else {
+				$value = $this->db->tableHandler($referentTable)->storageLocationToModelId($referentTable, $value);
+			}
+		}
+
+		return $value;
 	}
 }
 
@@ -301,7 +369,6 @@ abstract class DBStorage {
 
 	public static function query($sql) {
 		global $mysqli;
-		// echo "$sql\n";
 		$result = mysqli_query($mysqli, $sql);
 		if (!$result) {
 			throw new Exception(mysqli_error($mysqli) . ": $sql");

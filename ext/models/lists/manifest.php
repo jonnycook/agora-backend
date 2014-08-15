@@ -16,5 +16,6 @@ class ListsTableHandler extends SqlTableHandler {
 }
 
 return array(
-	'class' => ListsTableHandler
+	'class' => ListsTableHandler,
+	'modelName' => 'List',
 );

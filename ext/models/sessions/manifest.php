@@ -16,5 +16,6 @@ class SessionsTableHandler extends SqlTableHandler {
 }
 
 return array(
-	'class' => SessionsTableHandler
+	'class' => SessionsTableHandler,
+	'modelName' => 'Session',
 );
