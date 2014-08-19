@@ -51,6 +51,7 @@ switch (ENV) {
 		define('SHARED_PATH', '/var/www/shared/');
 		define('USE_RIAK', false);
 		define('MONGO_DB', 'agora');
+		define('GATEWAY', 'localhost');
 		// define('COOKIE_DOMAIN', 'agora_dev');
 		break;
 		

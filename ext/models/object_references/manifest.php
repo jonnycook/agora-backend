@@ -6,12 +6,13 @@ class ObjectReferencesTableHandler extends SqlTableHandler {
 	public function storageTableHasCreatorIdField() { return true; }
 
 	public function storageRecordToModelRecordMap() {
-		return array('object', 'object_user_id', 'creator_id');
+		return array('object', 'subscribe_object', 'object_user_id', 'creator_id');
 	}
 	
 	public function mapStorageRecordToModelRecord($storageTable, $storageRecord, $modelId) {
 		return array(
 			'object' => $storageRecord['object'],
+			'subscribe_object' => $storageRecord['subscribe_object'],
 			'object_user_id' => $storageRecord['object_user_id'],
 			'creator_id' => $storageRecord['creator_id'],
 		);
