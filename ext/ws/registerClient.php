@@ -25,7 +25,14 @@ if ($userId != null) {
 
 	$clientId = md5(rand());
 	mysqli_query($mysqli, "UPDATE m_users SET ext_version = '$extVersion' WHERE id = $userId"); 
-	mysqli_query($mysqli, "INSERT INTO clients SET client_id = '$clientId', instance_id = '$instanceId', user_id = $userId, created_at = UTC_TIMESTAMP(), last_seen_at = UTC_TIMESTAMP(), `version` = '$extVersion', updater_server = '$server'");
+
+	if ($_GET['subscribes']) {
+		$subscribes = 1;
+	}
+	else {
+		$subscribes = 0;
+	}
+	mysqli_query($mysqli, "INSERT INTO clients SET client_id = '$clientId', instance_id = '$instanceId', user_id = $userId, created_at = UTC_TIMESTAMP(), last_seen_at = UTC_TIMESTAMP(), `version` = '$extVersion', updater_server = '$server', subscribes = $subscribes");
 	$user = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT track, click_id, converted FROM m_users WHERE id = $userId"));
 
 	$response = array('status' => 'success', 'clientId' => $clientId, 'userId' => $userId, 'updaterServer' => $server, 'updateToken' => newUpdateToken($userId, $clientId));
