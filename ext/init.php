@@ -336,6 +336,45 @@ class Storage extends DBStorage {
 			}
 		}
 
+		if ($args['auxiliary']) {
+			// foreach (array('data', 'feelings', 'arguments') as $table) {
+			// 	$query = [];
+
+			// 	foreach ($allRecordsQuery as $modelName => $ids) {
+			// 		foreach ($ids as $id) {
+			// 			$query[] = "element_type = '$modelName' && element_id = '$id' && user_id = $this->userId";
+			// 		}
+			// 	}
+
+			// 	// var_dump($query);
+
+			// 	if ($query) {
+			// 		$query = '(' . implode(') || (', $query) . ')';
+
+			// 		$result = $this->query("SELECT * FROM m_$table WHERE $query");
+			// 		$tableHandler = $this->tableHandler($table);
+			// 		while ($row = mysqli_fetch_assoc($result)) {
+			// 			$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
+			// 			$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
+			// 		}
+			// 	}
+			// }
+
+			$tables = array('data', 'feelings', 'arguments');
+			foreach ($tables as $table) {
+				$result = $this->query("SELECT * FROM m_$table WHERE user_id = $this->userId");
+				$tableHandler = $this->tableHandler($table);
+				while ($row = mysqli_fetch_assoc($result)) {
+					if ($row['element_type'] == 'Product') {
+						$productIds[] = $row['element_id'];
+					}
+					$modelId = $tableHandler->deriveModelIdFromStorageRecord($table, $row);
+					$modelRecords[$table][$modelId] = $tableHandler->mapStorageRecordToModelRecord($table, $row, $modelId);
+				}
+			}
+		}
+
+
 		// var_dump($this->userId);
 		if ($args['products']) {
 			$tableHandler = $this->tableHandler('products');
