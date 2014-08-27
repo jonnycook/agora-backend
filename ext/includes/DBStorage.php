@@ -204,6 +204,12 @@ abstract class SqlTableHandler extends TableHandler {
 		}
 	}
 
+	public function getRecord($modelId) {
+		list($dbTable, $dbId) = static::unpackStorageLocationFromModelId($modelId);
+		$result = static::query("SELECT * FROM `m_$dbTable` WHERE id = $dbId");
+		return mysqli_fetch_assoc($result);
+	}
+
 	public function retrieveModelRecordsFromStorageForModelIds($modelIds) {
 		$dbRetrievalList = array();
 		foreach ($modelIds as $modelId) {
@@ -427,6 +433,10 @@ abstract class DBStorage {
 	}
 	public function touch($table, $id) {
 		$this->changes[$table][$id] = array();
+	}
+
+	public function getRecord($table, $id) {
+		return $this->tableHandler($table)->getRecord($id);
 	}
 
 	public function get($retrievalList) {

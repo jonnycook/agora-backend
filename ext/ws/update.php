@@ -2,7 +2,88 @@
 
 ini_set('html_errors', 0);
 
+function notification($userId, $type, $objectId, $record) {
+	global $db, $mysqli;
+
+	$types = array(
+		'newFeedbackComment' => array(
+			'id' => 0,
+			'table' => 'feedback_comments'
+		),
+		'newFeedbackCommentReply' => array(
+			'id' => 1,
+			'table' => 'feedback_comment_replies'
+		),
+		'newFeedbackItemReply' => array(
+			'id' => 2,
+			'table' => 'feedback_item_replies'
+		),
+	);
+
+	$typeId = $types[$type]['id'];
+
+	mysqli_query($mysqli, "INSERT INTO notifications SET user_id = $userId, type = $typeId, object_id = $objectId") or die(mysqli_error($mysqli));
+
+	$id = mysqli_insert_id($mysqli);
+
+	sendMessage($userId, 'sendUpdate', array(
+		'userId' => $userId,
+		'changes' => json_encode(array('notifications' => array(
+			"G$id" => array(
+				'type' => $typeId,
+				'object_id' => 'G' . $db->storage->tableHandler($types[$type]['table'])->deriveModelIdFromStorageRecord($types[$type]['table'], $record),
+				'seen' => 0,
+				'created_at' => gmdate('Y-m-d H:i:s')
+			)
+		))),
+	));
+}
+
+function onInsert($table, $id) {
+	global $db, $mysqli;
+	if ($table == 'feedback_comments') {
+		$record = $db->storage->getRecord($table, $id);
+		if ($record['creator_id'] != $record['user_id']) {
+			notification($record['user_id'], 'newFeedbackComment', $id, $record);
+		}
+	}
+	else if ($table == 'feedback_comment_replies') {
+		$record = $db->storage->getRecord($table, $id);
+		$commentRecord = $db->storage->getRecord('feedback_comments', $record['feedback_comment_id']);
+
+		$result = mysqli_query($mysqli, "SELECT DISTINCT creator_id FROM m_feedback_comment_replies WHERE feedback_comment_id = $record[feedback_comment_id]");
+
+		while ($row = mysqli_fetch_assoc($result)) {
+			if ($commentRecord['creator_id'] != $row['creator_id'] && $record['creator_id'] != $row['creator_id']) {
+				notification($row['creator_id'], 'newFeedbackCommentReply', $id, $record);
+			}
+		}
+
+		if ($commentRecord['creator_id'] != $record['creator_id']) {
+			notification($commentRecord['creator_id'], 'newFeedbackCommentReply', $id, $record);
+		}
+	}
+	else if ($table == 'feedback_item_replies') {
+		$record = $db->storage->getRecord($table, $id);
+		$commentRecord = $db->storage->getRecord('feedback_items', $record['feedback_item_id']);
+
+		$result = mysqli_query($mysqli, "SELECT DISTINCT creator_id FROM m_feedback_item_replies WHERE feedback_item_id = $record[feedback_item_id]");
+
+		while ($row = mysqli_fetch_assoc($result)) {
+			if ($commentRecord['creator_id'] != $row['creator_id'] && $record['creator_id'] != $row['creator_id']) {
+				notification($row['creator_id'], 'newFeedbackItemReply', $id, $record);
+			}
+		}
+
+		if ($commentRecord['creator_id'] != $record['creator_id']) {
+			notification($commentRecord['creator_id'], 'newFeedbackItemReply', $id, $record);
+		}
+	}
+}
+
 require_once('header.php');
+require_once(__DIR__.'/../includes/ws.php');
+
 
 $clientId = $_GET['clientId'];
 $userId = $_GET['userId'];
@@ -14,7 +95,6 @@ if ($clientId != 'Carl Sagan') {
 		echo 'invalid client id';
 		exit;
 	}
-
 	
 	if (!preg_match('/^\d+$/', $updateToken)) {
 		echo 'invalid update token';
@@ -41,10 +121,15 @@ $db = makeDb($userId, $clientUserId);
 $db->queryByUserId = true;
 
 $requestChanges = json_decode($_POST['changes'], true);
+
 $activity = $requestChanges['activity'];
 unset($requestChanges['activity']);
+
 $sharedObjects = $requestChanges['shared_objects'];
 unset($requestChanges['shared_objects']);
+
+$notifications = $requestChanges['notifications'];
+unset($requestChanges['notifications']);
 
 if ($userId != $clientUserId) {
 	if ($requestChanges['decisions']) {
@@ -112,13 +197,25 @@ if ($activity) {
 	}
 }
 
-if ($sharedObjects && $clientUserId == $userId) {
-	foreach ($sharedObjects as $id => $changes) {
-		if (isset($changes['seen'])) {
-			$seen = $changes['seen'] ? 1 : 0;
-			$saneId = substr($id, 1);
-			mysqli_query($mysqli, "UPDATE shared SET seen = $seen WHERE id = $saneId && with_user_id = $userId") or die(mysqli_error($mysqli));
-			$responseChanges['shared_objects'][$id] = array('seen' => $changes['seen']);
+if ($clientUserId == $userId) {
+	if ($sharedObjects) {
+		foreach ($sharedObjects as $id => $changes) {
+			if (isset($changes['seen'])) {
+				$seen = $changes['seen'] ? 1 : 0;
+				$saneId = substr($id, 1);
+				mysqli_query($mysqli, "UPDATE shared SET seen = $seen WHERE id = $saneId && with_user_id = $userId") or die(mysqli_error($mysqli));
+				$responseChanges['shared_objects'][$id] = array('seen' => $changes['seen']);
+			}
+		}
+	}
+	if ($notifications) {
+		foreach ($notifications as $id => $changes) {
+			if (isset($changes['seen'])) {
+				$seen = $changes['seen'] ? 1 : 0;
+				$saneId = substr($id, 1);
+				mysqli_query($mysqli, "UPDATE notifications SET seen = $seen WHERE id = $saneId && user_id = $userId") or die(mysqli_error($mysqli));
+				$responseChanges['notifications'][$id] = array('seen' => $changes['seen']);
+			}
 		}
 	}
 }
@@ -129,7 +226,7 @@ if ($db->changes) {
 		foreach ($changes as $id => $changeType) {
 			$finalId = $db->storage->finalId($table, $id);
 			$theChanges[$table][$finalId] = $changeType == 'updated';
-			
+
 			if ($db->return[$table][$id]) {
 				$return[$table][] = 'G' . $finalId;
 			}
@@ -163,6 +260,14 @@ if ($db->changes) {
 					}
 				}
 				$responseChanges[$table]["G$id"] = $record;
+			}
+		}
+
+		foreach ($db->changes as $table => $records) {
+			foreach ($records as $id => $record) {
+				if ($id[0] != 'G') {
+					onInsert($table, $finalId);
+				}
 			}
 		}
 	}

@@ -8,6 +8,7 @@ function sendMessage($userId, $type, $args) {
 	$gatewayServer = gatewayServer($userId);
 	$ch = curl_init("http://$gatewayServer/$type");
 	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($args));
 	curl_exec($ch);
 }
@@ -19,4 +20,3 @@ function sendUpdate($userId, $changes) {
 		'changes' => json_encode($changes),
 	));
 }
-

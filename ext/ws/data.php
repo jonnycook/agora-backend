@@ -107,23 +107,34 @@ if ($object == '*') {
 		}
 	}
 
-	$result = mysqli_query($mysqli, "SELECT * FROM invitations WHERE user_id = $userId && accepted_at IS NULL");
-	while ($row = mysqli_fetch_assoc($result)) {
-		$action = json_decode($row['action']);
-		if ($action->type == 'collaborate') {
-			$data['collaborators']["Gp$row[id]"] = array(
-				'object_user_id' => $userId,
-				'object' => $action->object,
-				'role' => $action->role,
-				'pending' => true,
-				'email' => $row['email'],
-				'invitation' => $row['id'],
+	if ($_GET['collaborators']) {
+		$result = mysqli_query($mysqli, "SELECT * FROM invitations WHERE user_id = $userId && accepted_at IS NULL");
+		while ($row = mysqli_fetch_assoc($result)) {
+			$action = json_decode($row['action']);
+			if ($action->type == 'collaborate') {
+				$data['collaborators']["Gp$row[id]"] = array(
+					'object_user_id' => $userId,
+					'object' => $action->object,
+					'role' => $action->role,
+					'pending' => true,
+					'email' => $row['email'],
+					'invitation' => $row['id'],
+				);
+			}
+		}
+
+		$result = mysqli_query($mysqli, "SELECT * FROM notifications WHERE user_id = $userId");
+		while ($row = mysqli_fetch_assoc($result)) {
+			$data['notifications']["G$row[id]"] = array(
+				'type' => $row['type'],
+				'object_id' => "G$row[object_id]",
+				'seen' => $row['seen'],
+				'created_at' => $row['created_at']
 			);
 		}
-	}
 
-
-	$data['activity'] = getAllActivity();
+		$data['activity'] = getAllActivity();		
+	}	
 }
 else if ($object == '/') {
 	$data = $db->prepareData($db->storage->getData(array(
