@@ -44,7 +44,7 @@ if (devEnv()) {
 		return $_COOKIE['userId'];
 	}
 	function setUserId($id) {
-		setcookie('userId', $id, time() + 60*60*24*30*3, '/', COOKIE_DOMAIN);
+		setcookie('userId', $id, time() + 60*60*24*30*3, '/');
 	}
 }
 else {
