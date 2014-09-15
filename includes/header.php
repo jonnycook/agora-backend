@@ -27,6 +27,8 @@ switch (ENV) {
 		define('MONGO_DB', 'agora');
 		define('SITE_DOMAIN', 'agora.dev');
 		define('GATEWAY', 'localhost');
+		define('COOKIE_DOMAIN', '.agora.dev');
+
 		break;
 
 	case 'TEST':
@@ -52,7 +54,7 @@ switch (ENV) {
 		define('USE_RIAK', false);
 		define('MONGO_DB', 'agora');
 		define('GATEWAY', 'localhost');
-		// define('COOKIE_DOMAIN', 'agora_dev');
+		define('COOKIE_DOMAIN', '66.228.54.96');
 		break;
 		
 	case 'MESSAGE_SERVER':
