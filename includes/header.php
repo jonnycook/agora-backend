@@ -20,7 +20,7 @@ if (!defined('ENV')) {
 
 switch (ENV) {
 	case 'LOCAL_DEV':
-		$mysqli = mysqli_connect('127.0.0.1', 'root', '');
+		$mysqli = mysqli_connect('127.0.0.1', 'root', '9wo7bCrA');
 		mysqli_select_db($mysqli, 'agora');
 		define('SHARED_PATH', '/web/agora-shared/');
 		define('USE_RIAK', false);

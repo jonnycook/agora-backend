@@ -30,7 +30,10 @@ if (substr($hash, 0, strlen($hashPart)) != $hashPart) {
 	exit;
 }
 
+
+
 $id = mysqli_real_escape_string($mysqli, $id);
+
 
 $row = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_$type WHERE id = $id"));
 
@@ -40,6 +43,28 @@ if (!$row['access']) {
 }
 
 $userId = userId();
+
+$object = "$type.$id";
+$sql = "SELECT * FROM permissions WHERE owner_id = $row[user_id] && object = '$object'";
+
+if ($userId) {
+	$sql .= " && (user_id IS NULL || user_id = $userId)";
+}
+else {
+	$sql .= " && user_id IS NULL";
+}
+
+$result = mysqli_query($mysqli, $sql);
+while ($permissionRow = mysqli_fetch_assoc($result)) {
+	if ($permissionRow['user_id']) {
+		$permission = $permissionRow['level'];
+		break;
+	}
+	else {
+		$permission = $permissionRow['level'];
+	}
+}
+
 if (!$userId) {
 	$userId = $row['user_id'];
 }
@@ -51,8 +76,16 @@ $model = $map[$type];
 
 $data = $db->storage->getData(array(
 	'records' => array($model => array($id)),
-	'products' => 'referenced'
+	'products' => 'referenced',
 ));
+
 $data = $db->prepareData($data);
 
-echo json_encode(array('data' => $data, 'id' => $id));
+if (isset($permission)) {
+	$data['permissions']['G' . $object] = array(
+		'object' => $object,
+		'level' => $permission
+	);
+}
+
+echo json_encode(array('data' => $data, 'id' => $id, 'userId' => $row['user_id']));

@@ -39,14 +39,12 @@ function decryptString($string, $key) {
 	);
 }
 
-
-
 if (devEnv()) {
 	function userId() {
 		return $_COOKIE['userId'];
 	}
 	function setUserId($id) {
-		setcookie('userId', $id, time() + 60*60*24*30*3, '/');
+		setcookie('userId', $id, time() + 60*60*24*30*3, '/', '.agora.dev');
 	}
 }
 else {

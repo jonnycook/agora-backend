@@ -133,6 +133,16 @@ if ($object == '*') {
 			);
 		}
 
+		$result = mysqli_query($mysqli, "SELECT * FROM permissions WHERE owner_id = $userId");
+		while ($row = mysqli_fetch_assoc($result)) {
+			$data['permissions'][dbIdToModelId($row['id'])] = array(
+				'user_id' => $row['user_id'],
+				'object' => $row['object'],
+				'level' => $row['level'],
+				'created_at' => $row['created_at'],
+			);
+		}
+
 		$data['activity'] = getAllActivity();		
 	}	
 }
@@ -171,6 +181,29 @@ else {
 	}
 
 	$data = $db->prepareData($data);
+
+	$clientUserId = getUserId($_GET['clientId']);
+
+	if ($clientUserId != $userId) {
+		$sql = "SELECT * FROM permissions WHERE owner_id = $userId && object = '$object' && (user_id IS NULL || user_id = $clientUserId)";
+		$result = mysqli_query($mysqli, $sql);
+		while ($permissionRow = mysqli_fetch_assoc($result)) {
+			if ($permissionRow['user_id']) {
+				$permission = $permissionRow['level'];
+				break;
+			}
+			else {
+				$permission = $permissionRow['level'];
+			}
+		}
+
+		if (isset($permission)) {
+			$data['permissions']['G' . $object] = array(
+				'object' => $object,
+				'level' => $permission
+			);
+		}
+	}
 
 	if ($_GET['collaborators']) {
 		$data['collaborators'] = getCollaborators($userId, $object);

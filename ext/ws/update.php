@@ -2,6 +2,26 @@
 
 ini_set('html_errors', 0);
 
+function processId($id) {
+	global $mysqli;
+	if ($id) {
+		return mysqli_real_escape_string($mysqli, substr($id, 1));
+	}
+	else {
+		return 'NULL';
+	}
+}
+
+function processString($string) {
+	global $mysqli;
+	return '"' . mysqli_real_escape_string($mysqli, $string) . '"';
+}
+
+function processInt($int) {
+	global $mysqli;
+	return mysqli_real_escape_string($mysqli, $int);
+}
+
 function notification($userId, $type, $objectId, $record) {
 	global $db, $mysqli;
 
@@ -131,6 +151,9 @@ unset($requestChanges['shared_objects']);
 $notifications = $requestChanges['notifications'];
 unset($requestChanges['notifications']);
 
+$permissions = $requestChanges['permissions'];
+unset($requestChanges['permissions']);
+
 if ($userId != $clientUserId) {
 	if ($requestChanges['decisions']) {
 		foreach ($requestChanges['decisions'] as $id => &$changes) {
@@ -215,6 +238,49 @@ if ($clientUserId == $userId) {
 				$saneId = substr($id, 1);
 				mysqli_query($mysqli, "UPDATE notifications SET seen = $seen WHERE id = $saneId && user_id = $userId") or die(mysqli_error($mysqli));
 				$responseChanges['notifications'][$id] = array('seen' => $changes['seen']);
+			}
+		}
+	}
+
+	if ($permissions) {
+		foreach ($permissions as $id => $changes) {
+			$responseChanges['permissions'][$globalId] = $changes;
+			if ($id[0] == 'G') {
+				$processedId = processId($id);
+				$permission = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT user_id,object FROM permissions WHERE id = $processedId && owner_id = $userId"));
+
+				if ($changes == 'deleted') {
+					mysqli_query($mysqli, "DELETE FROM permissions WHERE id = $processedId && owner_id = $userId");
+					sendMessage($userId, 'alterPermission', array(
+						'userId' => $userId,
+						'action' => 'delete',
+						'permission' => array('object' => $permission['object'], 'userId' => $permission['user_id'])
+					));
+				}
+				else {
+					$level = processInt($changes['level']);
+					mysqli_query($mysqli, "UPDATE permissions SET level = $level WHERE id = $processedId && owner_id = $userId");
+					sendMessage($userId, 'alterPermission', array(
+						'userId' => $userId,
+						'action' => 'update',
+						'permission' => array('object' => $permission['object'], 'userId' => $permission['user_id'], 'level' => $changes['level'])
+					));
+				}
+			}
+			else {
+				$permissionUserId = processId($changes['user_id']);
+				$object = processString($changes['object']);
+				$level = processInt($changes['level']);
+				mysqli_query($mysqli, "INSERT INTO permissions SET owner_id = $userId, user_id = $permissionUserId, object = $object, level = $level");
+
+				$globalId = dbIdToModelId(mysqli_insert_id($mysqli));
+				$mapping['permissions'][$id] = $globalId;
+
+				sendMessage($userId, 'alterPermission', array(
+					'userId' => $userId,
+					'action' => 'create',
+					'permission' => array('object' => $changes['object'], 'userId' => substr($changes['user_id'], 1), 'level' => $changes['level'])
+				));
 			}
 		}
 	}
