@@ -4,6 +4,7 @@ require_once('../includes/header.php');
 require_once('../includes/user.php');
 
 header('Access-Control-Allow-Origin: http://webapp.agora.dev');
+header('Access-Control-Allow-Origin: http://agora.sh');
 header('Access-Control-Allow-Credentials: true');
 
 

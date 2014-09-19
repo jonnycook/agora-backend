@@ -3,6 +3,7 @@ header('Content-Type: application/json');
 require_once('../includes/productComparison.php');
 
 header('Access-Control-Allow-Origin: http://webapp.agora.dev');
+header('Access-Control-Allow-Origin: http://agora.sh');
 header('Access-Control-Allow-Credentials: true');
 
 foreach ($_GET as $name => $value) {
