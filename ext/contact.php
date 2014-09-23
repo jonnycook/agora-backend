@@ -40,8 +40,8 @@ $msg->setBody($_POST['message']);
 $msg->setReplyTo($user['email']);
 
 $transport = Swift_SmtpTransport::newInstance('smtp.sendgrid.com', 25)
-  ->setUsername('buylater')
-  ->setPassword('s50meep10');
+  ->setUsername('agorash')
+  ->setPassword('ghijkk56k');
 
 $mailer = Swift_Mailer::newInstance($transport);
 
