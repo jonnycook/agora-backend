@@ -16,9 +16,9 @@ if ($_POST['replyTo']) {
 	$msg->setReplyTo($_POST['replyTo']);
 }
 
-$transport = Swift_SmtpTransport::newInstance('smtp.sendgrid.com', 25)
-  ->setUsername('agorash')
-  ->setPassword('ghijkk56k');
+$transport = Swift_SmtpTransport::newInstance('smtp.mandrillapp.com', 25)
+  ->setUsername('dev@agora.sh')
+  ->setPassword('DkKsg5zShP-aDxunIbgJaA');
 
 $mailer = Swift_Mailer::newInstance($transport);
 echo $mailer->send($msg);
