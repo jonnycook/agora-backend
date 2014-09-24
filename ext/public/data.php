@@ -3,6 +3,9 @@
 require_once('header.php');
 define('GET_RIAK_FIELDS', true);
 
+$userId = userId();
+
+
 $map = array(
 	'decisions' => 'Decision'
 );
@@ -37,12 +40,11 @@ $id = mysqli_real_escape_string($mysqli, $id);
 
 $row = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_$type WHERE id = $id"));
 
-if (!$row['access']) {
+if ($userId != $row['user_id'] && !$row['access']) {
 	echo '"accessDenied"';
 	exit;
 }
 
-$userId = userId();
 
 $object = "$type.$id";
 $sql = "SELECT * FROM permissions WHERE owner_id = $row[user_id] && object = '$object'";
@@ -63,6 +65,11 @@ while ($permissionRow = mysqli_fetch_assoc($result)) {
 	else {
 		$permission = $permissionRow['level'];
 	}
+}
+
+if ($userId != $row['user_id'] && !$permission) {
+	echo '"accessDenied"';
+	exit;
 }
 
 if (!$userId) {
