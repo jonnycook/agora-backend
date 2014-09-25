@@ -5,15 +5,10 @@ require_once('header.php');
 $userId = $_GET['userId'];
 $object = mysqli_real_escape_string($mysqli, $_POST['object']);
 
+
 $title = $_POST['title'];
 $message = $_POST['message'];
-$contributor = $_POST['contributor'];
-if ($contributor) {
-	$role = 1;
-}
-else {
-	$role = 0;
-}
+$role = $_POST['role'];
 
 if ($_POST['withUserId']) {
 	$withUser = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_users WHERE id = $_POST[withUserId]"));
@@ -85,12 +80,20 @@ if ($withUser) {
 
 
 	// *collaboration*
-	mysqli_query($mysqli, "INSERT INTO shared SET user_id = $userId, object = '$object', title = $sqlTitle, with_user_id = $withUser[id], role = $role, created_at = UTC_TIMESTAMP()") or die(mysqli_error($mysqli));
+	if ($_POST['subscribe_object']) {
+		$subscribeObject = '"' . mysqli_real_escape_string($mysqli, $_POST['subscribe_object']) . '"';
+	}
+	else {
+		$subscribeObject = 'NULL';
+	}
+	
+	mysqli_query($mysqli, "INSERT INTO shared SET user_id = $userId, object = '$object', subscribe_object = $subscribeObject, title = $sqlTitle, with_user_id = $withUser[id], role = $role, created_at = UTC_TIMESTAMP()") or die(mysqli_error($mysqli));
 	$id = mysqli_insert_id($mysqli);
 
 	$record = array(
 		'id' => $id,
 		'object' => $_POST['object'],
+		'subscribe_object' => $_POST['subscribe_object'],
 		'user_id' => $userId,
 		'with_user_id' => $withUser['id'],
 		'seen' => 0,
@@ -158,7 +161,7 @@ else {
 	// *collaboration*
 	$userName = $user['name'];
 	$key = md5($userId . time() . 'I like popsicles.' . rand());
-	$action = json_encode(array('type' => 'collaborate', 'object' => $object, 'role' => $role));
+	$action = json_encode(array('type' => 'collaborate', 'object' => $object, 'subscribe_object' => $_POST['subscribe_object'], 'role' => $role));
 	mysqli_query($mysqli, "INSERT INTO invitations SET 
 		`key` = '$key',
 		user_id = $userId, 

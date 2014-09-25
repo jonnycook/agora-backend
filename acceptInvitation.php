@@ -34,6 +34,7 @@ if (!$invitation['accepted_at']) {
 				'clientId' => 'Carl Sagan',
 				'userId' => $invitation['user_id'],
 				'object' => $action['object'],
+				'subscribe_object' => $action['subscribe_object'],
 				'role' => $action['role'],
 				'withUserId' => $userId
 			));

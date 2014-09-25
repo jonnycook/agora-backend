@@ -13,6 +13,7 @@ function deleteSharedEntry($userId, $shared) {
 			'id' => $shared['id'],
 			'user_id' => $shared['user_id'],
 			'object' => $shared['object'],
+			'subscribe_object' => $shared['subscribe_object'],
 			'with_user_id' => $shared['with_user_id']
 		)
 	));

@@ -82,6 +82,7 @@ if ($object == '*') {
 			'with_user_id' => "G$row[with_user_id]",
 			'title' => $row['title'],
 			'object' => $row['object'],
+			'subscribe_object' => $row['subscribe_object'],
 			'role' => $row['role'],
 			'seen' => $row['seen'],
 			'user_name' => $userName,
@@ -163,6 +164,7 @@ else if ($object == '@') {
 else {
 	list($table, $id) = explode('.', $object);
 	if ($table == 'decisions') $model = 'Decision';
+	else if ($table == 'feedback_pages') $model = 'FeedbackPage';
 	else if ($table == 'belts') $model = 'Belt';
 	else if ($table == 'lists') $model = 'List';
 	else if ($table == 'bundles') $model = 'Bundle';
