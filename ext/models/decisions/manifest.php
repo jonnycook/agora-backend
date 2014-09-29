@@ -24,6 +24,7 @@ class DecisionsTableHandler extends SqlTableHandler {
 			// 'dismissal_list_id' => $this->db->tableHandler('lists')->storageLocationToModelId('lists', $storageRecord['dismissal_list_id']),
 			'display_options' => $storageRecord['display_options'],
 			'share_title' => $storageRecord['share_title'],
+			'title' => $storageRecord['title'],
 			'share_message' => $storageRecord['share_message'],
 			'shared' => $storageRecord['shared'],
 			'creator_id' => $storageRecord['creator_id'],

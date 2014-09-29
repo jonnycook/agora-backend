@@ -68,7 +68,7 @@ class InputStream {
 
 		$subject = $this->string();
 
-		if (($str = substr($subject, 0, strlen($string))) == $string) {
+		if (strcasecmp(($str = substr($subject, 0, strlen($string))), $string) == 0) {
 			$this->position += strlen($string);
 			return $str;
 		}
