@@ -79,8 +79,8 @@ PS3
 PS3 Slim
 Xbox
 Xbox 360
-NES
-SNES
+NESASDF
+SNESASDF
 N64
 GameCube
 Wii
