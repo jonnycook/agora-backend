@@ -770,6 +770,9 @@ foreach ($lines as $line) {
 		else if ($word[strlen($word) - 1] == 's') {
 			$plural = $word . 'es';
 		}
+		else if ($word[strlen($word) - 2] == 'lf') {
+			$plural = substr($word, 0, -1) . 'ves';
+		}
 		else {
 			$plural = $word . 's';
 		}
