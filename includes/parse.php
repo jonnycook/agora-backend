@@ -406,9 +406,9 @@ function fuzzyParseProduct($stream) {
 	// var_dump($stream);
 	// var_dump($string);
 
-	if (preg_match('/that (is|are)/', $string, $matches)) {
-		$pos = strpos($string, $matches[0]);
-		$product = trim(substr($string, 0, $pos));
+	if (preg_match('/that (is|are)/i', $string, $matches)) {
+		$pos = stripos($string, $matches[0]);
+		$product = strtolower(trim(substr($string, 0, $pos)));
 		$propertiesPart = trim(substr($string, $pos + strlen($matches[0])));
 
 		$properties = parseProperties($propertiesPart);
@@ -416,7 +416,7 @@ function fuzzyParseProduct($stream) {
 		$products = products();
 
 		foreach ($products as $productType) {
-			$pos = strpos($product, $productType);
+			$pos = stripos($product, $productType);
 			if ($pos !== false) {
 				$properties = array_merge(parseProperties(trim(substr($product, 0, $pos))), $properties);;
 				$product = trim(substr($product, $pos));
@@ -434,9 +434,9 @@ function fuzzyParseProduct($stream) {
 	}
 	else {
 		$products = products($singulars);
-		$product = trim($string);
+		$product = strtolower(trim($string));
 		foreach ($products as $productType) {
-			$pos = strpos($product, $productType);
+			$pos = stripos($product, $productType);
 			if ($pos !== false) {
 				$properties = parseProperties(trim(substr($product, 0, $pos)));
 
@@ -463,7 +463,7 @@ function fuzzyParseProductInfo($stream) {
 	// var_dump($string);
 
 
-	$forPos = strpos($string, ' for ');
+	$forPos = stripos($string, ' for ');
 	if ($forPos === false) {
 		if (substr($string, 0, 4) == 'for ') {
 			$forPos = 0;
@@ -481,7 +481,7 @@ function fuzzyParseProductInfo($stream) {
 		$start = $forPos + $forLen;
 		$purpose = trim(substr($string, $start));
 
-		$inPos = strpos($purpose, ' in ');
+		$inPos = stripos($purpose, ' in ');
 
 		if ($inPos !== false) {
 			$match['purpose'] = /*array($stream->position + $start, */trim(substr($purpose, 0, $inPos))/*)*/;
