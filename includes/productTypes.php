@@ -732,7 +732,10 @@ Lacrosse helmet
 Motorcycle helmet
 Racing helmet
 Safety helmet
-Lifejacket';
+Lifejacket
+Watch
+Clothes
+';
 
 
 $plurals = array(
