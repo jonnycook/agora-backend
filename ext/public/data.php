@@ -38,12 +38,6 @@ $id = mysqli_real_escape_string($mysqli, $id);
 
 $row = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_$type WHERE id = $id"));
 
-if ($userId != $row['user_id'] && !$row['access']) {
-	echo '"accessDenied"';
-	exit;
-}
-
-
 $object = "$type.$id";
 $sql = "SELECT * FROM permissions WHERE owner_id = $row[user_id] && object = '$object'";
 
@@ -65,12 +59,18 @@ while ($permissionRow = mysqli_fetch_assoc($result)) {
 	}
 }
 
-var_dump($permission);
+
 
 if ($userId != $row['user_id'] && !$permission) {
 	echo '"accessDenied"';
 	exit;
 }
+
+// if ($userId != $row['user_id'] && !$row['access']) {
+// 	echo '"accessDenied"';
+// 	exit;
+// }
+
 
 if (!$userId) {
 	$userId = $row['user_id'];
