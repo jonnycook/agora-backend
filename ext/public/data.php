@@ -59,7 +59,7 @@ while ($permissionRow = mysqli_fetch_assoc($result)) {
 	}
 }
 
-
+var_dump($permission);
 
 if ($userId != $row['user_id'] && !$permission) {
 	echo '"accessDenied"';
