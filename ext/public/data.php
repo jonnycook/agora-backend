@@ -48,6 +48,9 @@ else {
 	$sql .= " && user_id IS NULL";
 }
 
+var_dump($object);
+var_dump($row);
+
 $result = mysqli_query($mysqli, $sql);
 while ($permissionRow = mysqli_fetch_assoc($result)) {
 	var_dump($permissionRow);
