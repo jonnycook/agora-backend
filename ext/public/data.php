@@ -33,8 +33,6 @@ if (substr($hash, 0, strlen($hashPart)) != $hashPart) {
 	exit;
 }
 
-
-
 $id = mysqli_real_escape_string($mysqli, $id);
 
 
