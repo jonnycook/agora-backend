@@ -56,7 +56,7 @@ else {
 
 $result = mysqli_query($mysqli, $sql);
 while ($permissionRow = mysqli_fetch_assoc($result)) {
-	if ($permissionRow['user_id']) {
+	if ($permissionRow['user_id'] == $userId) {
 		$permission = $permissionRow['level'];
 		break;
 	}
@@ -64,6 +64,8 @@ while ($permissionRow = mysqli_fetch_assoc($result)) {
 		$permission = $permissionRow['level'];
 	}
 }
+
+var_dump($permission);
 
 if ($userId != $row['user_id'] && !$permission) {
 	echo '"accessDenied"';
