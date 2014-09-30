@@ -50,6 +50,7 @@ else {
 
 $result = mysqli_query($mysqli, $sql);
 while ($permissionRow = mysqli_fetch_assoc($result)) {
+	var_dump($permissionRow);
 	if ($permissionRow['user_id'] == $userId) {
 		$permission = $permissionRow['level'];
 		break;
