@@ -279,7 +279,7 @@ if ($clientUserId == $userId) {
 				sendMessage($userId, 'alterPermission', array(
 					'userId' => $userId,
 					'action' => 'create',
-					'permission' => array('object' => $changes['object'], 'userId' => substr($changes['user_id'], 1), 'level' => $changes['level'])
+					'permission' => array('object' => $changes['object'], 'userId' => $changes['user_id'] ? substr($changes['user_id'], 1) : null, 'level' => $changes['level'])
 				));
 			}
 		}
