@@ -18,6 +18,14 @@ if (!defined('ENV')) {
 	}
 }
 
+if (ENV == 'LOCAL_DEV') {
+	header('Access-Control-Allow-Origin: http://webapp.agora.dev');
+}
+else if (ENV == 'PROD') {
+	header('Access-Control-Allow-Origin: http://agora.sh');
+}
+header('Access-Control-Allow-Credentials: true');
+
 switch (ENV) {
 	case 'LOCAL_DEV':
 		$mysqli = mysqli_connect('127.0.0.1', 'root', '9wo7bCrA');
@@ -28,7 +36,6 @@ switch (ENV) {
 		define('SITE_DOMAIN', 'agora.dev');
 		define('GATEWAY', 'localhost');
 		define('COOKIE_DOMAIN', '.agora.dev');
-
 		break;
 
 	case 'TEST':
@@ -47,6 +54,7 @@ switch (ENV) {
 	// 	define('USE_RIAK', false);
 	// 	define('MONGO_DB', 'agora_dev');
 	// 	break;
+
 	case 'LINODE_DEV':
 		$mysqli = mysqli_connect('127.0.0.1', 'root', 'ghijkk56k') or die(mysqli_error($mysqli));
 		mysqli_select_db($mysqli, 'agora');
