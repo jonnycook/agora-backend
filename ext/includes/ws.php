@@ -11,7 +11,7 @@ if (ENV == 'PROD') {
 			return $gatewayServers[$_gatewayServerByUserId[$userId]];
 		}
 		else {
-			$row = mysql_fetch_assoc(mysqli_query("SELECT gateway_server FROM m_users WHERE id = $userId"));
+			$row = mysql_fetch_assoc(mysqli_query($mysqli, "SELECT gateway_server FROM m_users WHERE id = $userId"));
 			$_gatewayServerByUserId[$userId] = $row['gateway_server'];
 			return $gatewayServers[$row['gateway_server']];
 		}
