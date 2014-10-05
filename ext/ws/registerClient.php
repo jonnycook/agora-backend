@@ -31,7 +31,7 @@ if ($userId != null) {
 		while ($row = mysqli_fetch_row($result)) {
 			$updaterServers[] = $row[0];
 		}
-		$server = $updaterServers[rand(0, count($updaterServers) - 1)];
+		$server = $updaterServers[mt_rand(0, count($updaterServers) - 1)];
 	}
 
 	$clientId = md5(rand());
