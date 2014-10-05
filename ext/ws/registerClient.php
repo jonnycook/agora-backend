@@ -2,6 +2,11 @@
 
 require_once('header.php');
 
+if (!$_GET['tester']) {
+	echo '"not signed in"';
+	exit;
+}
+
 $userId = userId();
 
 if ($userId != null) {
