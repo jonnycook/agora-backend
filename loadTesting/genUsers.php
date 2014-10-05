@@ -1,6 +1,6 @@
 <?php
 
-require_once('includes/header.php');
+require_once('../includes/header.php');
 
 for ($i = 0; $i < 100; ++ $i) {
 	$email = $i;
