@@ -2,12 +2,18 @@
 
 require_once('header.php');
 
-if (!$_GET['tester']) {
-	echo '"not signed in"';
-	exit;
+if (defined('TESTING')) {
+	if (!isset($_GET['tester'])) {
+		echo '"not signed in"';
+		exit;
+	}
+
+	$userId = $_GET['tester'];
 }
 
-$userId = userId();
+else {
+	$userId = userId();
+}
 
 if ($userId != null) {
 	$extVersion = mysqli_real_escape_string($mysqli, $_GET['extVersion']);
