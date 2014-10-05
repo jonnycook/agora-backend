@@ -18,13 +18,7 @@ if (!defined('ENV')) {
 	}
 }
 
-if (ENV == 'LOCAL_DEV') {
-	header('Access-Control-Allow-Origin: http://webapp.agora.dev');
-}
-else if (ENV == 'PROD') {
-	header('Access-Control-Allow-Origin: http://agora.sh');
-}
-header('Access-Control-Allow-Credentials: true');
+require_once(__DIR__.'/allowOrigin.php');
 
 switch (ENV) {
 	case 'LOCAL_DEV':
