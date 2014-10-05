@@ -18,8 +18,6 @@ if (!defined('ENV')) {
 	}
 }
 
-require_once(__DIR__.'/allowOrigin.php');
-
 switch (ENV) {
 	case 'LOCAL_DEV':
 		$mysqli = mysqli_connect('127.0.0.1', 'root', '9wo7bCrA');
@@ -90,3 +88,5 @@ function devEnv() {
 	return ENV == 'LOCAL_DEV' || ENV == 'LINODE_DEV';
 }
 
+
+require_once(__DIR__.'/allowOrigin.php');
