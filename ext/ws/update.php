@@ -1,5 +1,7 @@
 <?php
 
+// throw new Error();
+
 ini_set('html_errors', 0);
 
 function processId($id) {
