@@ -109,8 +109,10 @@ class ProductsTableHandler extends SqlTableHandler {
 
 	// storage to model
 	public function storageLocationToModelId($storageTable, $storageId) {
-		$row = mysqli_fetch_assoc($this->query("SELECT * FROM m_products WHERE id = $storageId"));
-		return static::deriveModelIdFromStorageRecord($storageTable, $row);
+		if ($storageId) {
+			$row = mysqli_fetch_assoc($this->query("SELECT * FROM m_products WHERE id = $storageId"));
+			return static::deriveModelIdFromStorageRecord($storageTable, $row);			
+		}
 	}
 
 	public static function deriveModelIdFromStorageRecord($storageTable, $storageRecord) {
