@@ -24,7 +24,8 @@ function resolveArgs($args, $num) {
 
 if ($type == 'visit') {
 	$siteId = Site::siteForName($args[0])->id;
-	mysqli_query($mysqli, "INSERT INTO visited SET user_id = $userId, site_id = $siteId");
+	list($url) = resolveArgs($args, 1);
+	mysqli_query($mysqli, "INSERT INTO visited SET user_id = $userId, site_id = $siteId, url = $url");
 }
 else if ($type == 'event') {
 	list($object, $action, $param) = resolveArgs($args, 3);
