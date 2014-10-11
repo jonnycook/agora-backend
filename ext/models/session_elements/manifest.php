@@ -7,7 +7,7 @@ class SessionElementsTableHandler extends ElementsTableHandler {
 }
 
 return array(
-	'class' => SessionElementsTableHandler
+	'class' => SessionElementsTableHandler,
 	'modelName' => 'SessionElement',
 	'model' => array(
 		'referents' => array(
