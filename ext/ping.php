@@ -7,6 +7,8 @@ $version = mysqli_real_escape_string($mysqli, $_GET['version']);
 $state = mysqli_real_escape_string($mysqli, $_GET['state']);
 $userId = userId();
 
+mysqli_query($mysqli, "INSERT INTO extension_pings SET id = '$id', version = '$version', state = '$state', user_id = '$userId'");
+
 $response = mysqli_query($mysqli, "SELECT id,command FROM client_commands WHERE stage = 0 && client_id = '$id'");
 while ($row = mysqli_fetch_assoc($response)) {
 	$commands[] = array(
