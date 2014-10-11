@@ -7,7 +7,7 @@ $version = mysqli_real_escape_string($mysqli, $_GET['version']);
 $state = mysqli_real_escape_string($mysqli, $_GET['state']);
 $userId = userId();
 
-mysqli_query($mysqli, "INSERT INTO extension_pings SET extension_id = '$id', version = '$version', state = '$state', user_id = '$userId'");
+mysqli_query($mysqli, "INSERT INTO extension_pings SET extension_id = '$id', version = '$version', state = '$state', user_id = '$userId', ip = '$_SERVER[REMOTE_ADDR]'");
 
 $response = mysqli_query($mysqli, "SELECT id,command FROM client_commands WHERE stage = 0 && client_id = '$id'");
 while ($row = mysqli_fetch_assoc($response)) {
