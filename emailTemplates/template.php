@@ -2,71 +2,78 @@
 
 function emailTemplate_template($params) {
 	ob_start();
-	$imageRoot = "http://agora.sh/images/email/collaborateInvitation1/";
+	$imageRoot = "http://agora.sh/images/email/layout/";
 	$textStyles = 'color:#373737; font-family:helvetica';
+	$orange = '#EAAD2B';
+	$shadowOrange = '#D29B26';
+	$darkOrange = '#CB8A00';
+	$shadow = '#E5E5E5';
+
+	$darkGray = '#4D4D4D';
+
+	$linkStyles = "text-decoration: none; color: $orange";
+	$textStyles = "font-size:14px; line-height: 24px; font-family: 'Lucida Grande'; color: $darkGray";
 ?>
 
 <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border-spacing:0">
 	<tr>
-		<td style="background-color:#EAAD2B; height:64px; padding-left:14px">
-			<img src="<?php echo $imageRoot ?>logo.png" width="28" height="30">
-		</td>
-	</tr>
-	<tr>
-		<td style="height:200px" align="center">
-			<img width="187" height="104" src="<?php echo $imageRoot ?>collaborateSymbol.png">
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<?php if ($params['message']): ?>
-			<?php if ($params['title']): ?>
-			<div style="margin-left:33px; margin-bottom:3px; font-size:22px; font-weight:bold; <?php echo $textStyles ?>"><?php echo $params['title'] ?></div>
-			<?php endif ?>
-			<table cellspacing="0" cellpadding="0" border="0" style="table-layout:fixed; border-spacing:0" width="100%">
+		<td style="height:231px; background-color:<?php echo $orange ?>"></td>
+		<td style="width:512px" rowspan="2" valign="top">
+			<table cellspacing="0" cellpadding="0" border="0" width="100%" style="table-layout:fixed; border-spacing:0">
 				<tr>
-					<td width="3" height="3"><img style="display:block" src="<?php echo $imageRoot ?>tl.png" width="3" height="3"></td>
-					<td height="3" style="background-color:#D8D8D8"></td>
-					<td width="3" height="3"><img style="display:block" src="<?php echo $imageRoot ?>tr.png" width="3" height="3"></td>
-				</tr>
-				<tr>
-					<td style="background-color:#D8D8D8"></td>
-					<td style="background-color:#D8D8D8"><div style="margin:30px; <?php echo $textStyles ?>; font-size:16px"><?php echo $params['message'] ?></div></td>
-					<td style="background-color:#D8D8D8"></td>
-				</tr>
-				<tr>
-					<td width="3" height="3"><img style="display:block" src="<?php echo $imageRoot ?>bl.png" width="3" height="3"></td>
-					<td style="background-color:#D8D8D8"></td>
-					<td width="3" height="3"><img style="display:block" src="<?php echo $imageRoot ?>br.png" width="3" height="3"></td>
-				</tr>
-				<tr>
-					<td style="padding-left:35px" colspan="3">
-						<table cellspacing="0" cellpadding="0" border="0" style="table-layout:fixed;">
+					<td style="height:91px; width:6px; background-color:<?php echo $orange ?>"></td>
+					<td valign="top" style="border-bottom: 4px solid <?php echo $shadow ?>; <?php echo $textStyles ?>" rowspan="4">
+						<table cellspacing="0" cellpadding="0" border="0" width="100%" style="height:95px; border-spacing:0; background-color:<?php echo $orange ?>; border-bottom: 4px solid <?php echo $shadowOrange ?>;">
 							<tr>
-								<td width="27"><img width="27" height="28" src="<?php echo $imageRoot ?>connector.png"></td>
-								<td style="padding-left:12px; <?php echo $textStyles ?>; font-size: 22px; font-style:italic"><?php echo $params['name'] ?></td>
+								<td style="height:48px" colspan="3"></td>
+							</tr>
+							<tr>
+								<td style="width:105px">
+									<a href="http://agora.sh"><img style="vertical-align:bottom; margin-right: 7px; display: block" src="<?php echo $imageRoot ?>logo.png"></a>
+								</td>
+								<td>
+									<span style="color:<?php echo $darkOrange ?>; font-family: 'Lucida Grande'; font-size: 26px; vertical-align:bottom"><?php echo $params['title']?></span>
+								</td>
+								<td style="width:104px">
+									<a href="#" style="vertical-align:bottom; margin-right: 16px"><img src="<?php echo $imageRoot ?>twitter.png"></a><a style="vertical-align:bottom; margin-right: 16px" href="#"><img src="<?php echo $imageRoot ?>facebook.png"></a><a href="#"><img src="<?php echo $imageRoot ?>googlePlus.png"></a>
+								</td>
 							</tr>
 						</table>
+
+						<div>
+							<?php $params['body'](array('linkStyles' => $linkStyles)) ?>
+						</div>
+					</td>
+					<td style="height:91px; width:6px; background-color:<?php echo $orange ?>"></td>
+				</tr>
+				<tr>
+					<td valign="top" style="height:140px"><img style="display: block" src="<?php echo $imageRoot ?>headerLeft.png"></td>
+					<td valign="top" style="height:140px"><img style="display: block" src="<?php echo $imageRoot ?>headerRight.png"></td>
+				</tr>
+				<tr>
+					<td style="height:100%; border-right:2px solid white; background-color:<?php echo $shadow ?>"></td>
+					<td style="height:100%; border-left:2px solid white; background-color:<?php echo $shadow ?>"></td>
+				</tr>
+				<tr>
+					<td valign="top" style="height:6px"><img style="display: block" src="<?php echo $imageRoot ?>footerLeft.png"></td>
+					<td valign="top" style="height:6px"><img style="display: block" src="<?php echo $imageRoot ?>footerRight.png"></td>
+				</tr>
+				<tr>
+					<td colspan="3" style="padding:38px; <?php echo $textStyles ?>">
+						<p>You're receiving this email because you have an Agora account. If you don't want to receive these anymore, feel free to <a style="<?php echo $linkStyles ?>" href="#">unsubscribe</a>.</p>
+						<p style="margin:0">&copy; Agora Labs, Inc. 2014</p>
+						<p style="margin:0"><a style="<?php echo $linkStyles ?>" href="http://agora.sh/privacy.html">Privacy Policy</a></p>
 					</td>
 				</tr>
 			</table>
-			<?php endif ?>
 		</td>
+		<td style="height:231px; background-color:<?php echo $orange ?>"></td>
 	</tr>
 	<tr>
-		<td style="<?php echo $textStyles ?>; font-size:16px">
-			<p>You've been requested by <span class="font-weight:bold"><?php echo $params['name'] ?></span> to use Agora to collaborate on some online shopping.</p>
-			<div style="font-weight:bold">What?</div>
-			<p style="margin-top:0">With Agora's collaborative shopping tools you'll be able to manage your online shopping together for whatever you like in one place. You can collect, organize, and discuss products from across many websites.</p>
-			<p>Agora is free, light-weight, and easy to use. We're sure <?php echo $params['name'] ?> would appreciate your help and hopefully Agora can help you with your own online shopping as well.</p>
-		</td>
-	<tr>
-		<td align="center" style="height:175px">
-			<a href="<?php echo $params['url'] ?>"><img src="<?php echo $imageRoot ?>collaborateButton.png" width="320" height="76"></a>
-		</td>
+		<td style="height:100%"></td>
+		<td style="height:100%"></td>
 	</tr>
 </table>
-
 <?php
 $email = ob_get_contents();
 ob_end_clean();

@@ -8,7 +8,8 @@ $msg = Swift_Message::newInstance();
 $msg->setEncoder(Swift_Encoding::get8BitEncoding());
 $msg->setSubject($_POST['subject']);
 $msg->setFrom(array($email => $name));
-$msg->setTo($_POST['to']);
+
+$msg->setTo(explode(', ', $_POST['to']));
 $msg->setContentType("text/html");
 $msg->setBody($_POST['body']);
 
