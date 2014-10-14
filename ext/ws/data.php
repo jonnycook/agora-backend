@@ -144,7 +144,7 @@ if ($object == '*') {
 			);
 		}
 
-		$data['activity'] = getAllActivity();		
+		// $data['activity'] = getAllActivity();		
 	}	
 }
 else if ($object == '/') {
