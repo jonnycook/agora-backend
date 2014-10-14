@@ -9,7 +9,7 @@ $body = emailTemplate_template(array());
 $msg = Swift_Message::newInstance(); 
 $msg->setEncoder(Swift_Encoding::get8BitEncoding());
 $msg->setSubject("Test");
-// $msg->setFrom(array($user['email'] => $user['name']));
+$msg->setFrom(array('contact@agora.sh' => 'Test'));
 $msg->setTo('qubsoft@gmail.com');
 $msg->setContentType("text/html");
 $msg->setBody($body);
