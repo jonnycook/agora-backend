@@ -60,7 +60,7 @@ function emailTemplate_template($params) {
 				</tr>
 				<tr>
 					<td colspan="3" style="padding:38px; <?php echo $textStyles ?>">
-						<p>You're receiving this email because you have an Agora account. If you don't want to receive these anymore, feel free to <a style="<?php echo $linkStyles ?>" href="#">unsubscribe</a>.</p>
+						<p>You're receiving this email because you have an Agora account. If you don't want to receive these anymore, feel free to <a style="<?php echo $linkStyles ?>" href="<?php echo $params['unsubscribe'] ?>">unsubscribe</a>.</p>
 						<p style="margin:0">&copy; Agora Labs, Inc. 2014</p>
 						<p style="margin:0"><a style="<?php echo $linkStyles ?>" href="http://agora.sh/privacy.html">Privacy Policy</a></p>
 					</td>
