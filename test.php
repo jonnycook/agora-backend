@@ -1,6 +1,7 @@
-
-
 <?php
+
+require_once('includes/header.php');
+
 
 function emailBody($styles) {
 	extract($styles);
@@ -15,11 +16,9 @@ function emailBody($styles) {
 			<p>Over the next few months, we'll be emailing you some tutorials that will teach you how to get the most out of Agora.</p>
 			<p>You can access our video tutorials by visiting <a href="http://agora.sh/tutorials.html" style="<?php echo $linkStyles ?>">http://agora.sh/tutorials.html</a> or by clicking the question mark icon on the Agora Belt.</p>
 			<img src="<?php echo $imageRoot ?>image.png">
-			<p>Finally, check out our list of growing <a styles="<?php echo $linkStyles ?>" href="http://agora.sh/supportedSites.html">supported sites</a>.</p>
+			<p>Finally, check out our list of growing <a style="<?php echo $linkStyles ?>" href="http://agora.sh/supportedSites.html">supported sites</a>.</p>
 			<p>If you have any other questions please send us an email at <a href="mailto:contact@agora.sh" style="<?php echo $linkStyles ?>">contact@agora.sh</a>. We want to hear from you!</p>
-			<p>Cheers,<br>
-			The Agora Team
-			</p>
+			<p>Cheers,<br><a style="<?php echo $linkStyles ?>" href="http://agora.sh/about.html">The Agora Team</a></p>
 		</div>
 	<?php
 }
@@ -31,11 +30,11 @@ require_once('includes/swift/swift_required.php');
 $body = emailTemplate_template(array(
 	'title' => 'Welcome',
 	'body' => emailBody,
-	// 'unsubscribe'
+	'unsubscribe' => 'http://agora.sh/unsubscribe.php?key=' . base64_encode(encryptString(1, 'A monkey usually eats bananas.')),
 ));
 
 echo $body;
-// exit;
+exit;
 
 // $msg = Swift_Message::newInstance(); 
 // $msg->setEncoder(Swift_Encoding::get8BitEncoding());

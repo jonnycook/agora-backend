@@ -35,7 +35,7 @@ function emailTemplate_template($params) {
 									<span style="color:<?php echo $darkOrange ?>; font-family: 'Lucida Grande'; font-size: 26px; vertical-align:bottom"><?php echo $params['title']?></span>
 								</td>
 								<td style="width:104px">
-									<a href="#" style="vertical-align:bottom; margin-right: 16px"><img src="<?php echo $imageRoot ?>twitter.png"></a><a style="vertical-align:bottom; margin-right: 16px" href="#"><img src="<?php echo $imageRoot ?>facebook.png"></a><a href="#"><img src="<?php echo $imageRoot ?>googlePlus.png"></a>
+									<a href="https://twitter.com/agorawisdom" style="vertical-align:bottom; margin-right: 16px"><img src="<?php echo $imageRoot ?>twitter.png"></a><a style="vertical-align:bottom; margin-right: 16px" href="https://www.facebook.com/pages/Agora/290440127749028"><img src="<?php echo $imageRoot ?>facebook.png"></a><a href="https://plus.google.com/u/0/104439806048452341734"><img src="<?php echo $imageRoot ?>googlePlus.png"></a>
 								</td>
 							</tr>
 						</table>
