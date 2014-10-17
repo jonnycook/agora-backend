@@ -25,7 +25,14 @@ $id = insert(array(
 ), 'contact_log');
 
 if ($userId = userId()) {
-	$user = mysqli_fetch_assoc(mysqli_query("SELECT * FROM m_users WHERE id = $userId"));
+	$user = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT * FROM m_users WHERE id = $userId"));
+}
+
+if ($user['email']) {
+	$email = $user['email'];
+}
+else {
+	$email = 'no-email@agora.sh';
 }
 
 require_once('../includes/swift/swift_required.php');
@@ -33,11 +40,12 @@ require_once('../includes/swift/swift_required.php');
 $msg = Swift_Message::newInstance(); 
 $msg->setEncoder(Swift_Encoding::get8BitEncoding());
 $msg->setSubject($_POST['subject']);
-$msg->setFrom(array($user['email'] => $user['name']));
+
+$msg->setFrom(array($email => $user['name']));
 $msg->setTo('contact@agora.sh');
 $msg->setBody($_POST['message']);
 
-$msg->setReplyTo($user['email']);
+$msg->setReplyTo($email);
 
 $transport = Swift_SmtpTransport::newInstance('smtp.mandrillapp.com', 25)
   ->setUsername('dev@agora.sh')
