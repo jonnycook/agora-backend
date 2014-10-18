@@ -258,19 +258,16 @@ class ProductsTableHandler extends SqlTableHandler {
 				$this->query("UPDATE `m_$this->storageTable` SET " . implode(',', $sql) . " WHERE $idQueryPart");
 			}
 
-
-			// $this->query("UPDATE `user_products` SET $setQueryPart WHERE user_id = $this->userId && product_id = $this->storageId");
-
-
 			$this->query("UPDATE `user_products` SET $setQueryPart, updated_at = UTC_TIMESTAMP() WHERE user_id = $this->userId && product_id = $this->storageId");
-			if (!mysqli_affected_rows($mysqli)) {
+
+			if (!$affected = mysqli_affected_rows($mysqli)) {
 				if (!$values['sid'] || !$values['site_id']) {
 					$row = mysqli_fetch_assoc($this->query("SELECT sid, site_id FROM m_products WHERE id = $this->storageId"));
 					$values['sid'] = $row['sid'];
 					$values['site_id'] = $row['site_id'];
 					$setQueryPart = static::setQueryPart($values);
 				}
-				$this->query("INSERT INTO user_products SET product_id = $this->storageId, user_id = $this->userId, updated_at = UTC_TIMESTAMP(), $setQueryPart");
+				$this->query("INSERT IGNORE INTO user_products SET product_id = $this->storageId, user_id = $this->userId, updated_at = UTC_TIMESTAMP(), $setQueryPart");
 			}
 		}
 
