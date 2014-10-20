@@ -130,12 +130,12 @@ class ProductsTableHandler extends SqlTableHandler {
 		$record = mysqli_fetch_assoc($this->query("SELECT * FROM user_products WHERE product_id = $storageRecord[id] && user_id = $this->userId"));
 
 		$modelRecord = array(
-			'title' => $record['title'] ? $record['title'] : $storageRecord['title'],
-			'price' => $record['price'] ? $record['price'] : $storageRecord['price'],
-			'rating' => $record['rating'] ? $record['rating'] : $storageRecord['rating'],
-			'status' => $record['status'] ? $record['status'] : $storageRecord['status'],
-			'ratingCount' => $record['rating_count'] ? $record['rating_count'] : $storageRecord['rating_count'],
-			'image' => $record['image_url'] ? $record['image_url'] : $storageRecord['image_url'],
+			'title' => $record['title'] !== null ? $record['title'] : $storageRecord['title'],
+			'price' => $record['price'] !== null ? $record['price'] : $storageRecord['price'],
+			'rating' => $record['rating'] !== null ? $record['rating'] : $storageRecord['rating'],
+			'status' => $record['status'] !== null ? $record['status'] : $storageRecord['status'],
+			'ratingCount' => $record['rating_count'] !== null ? $record['rating_count'] : $storageRecord['rating_count'],
+			'image' => $record['image_url'] !== null ? $record['image_url'] : $storageRecord['image_url'],
 			'last_scraped_at' => $record['last_scraped_at'],
 			'scraper_version' => $record['scraper_version'],
 			'purchased' => !!$record['purchased'],
