@@ -24,7 +24,7 @@ if (!$userId) {
 	}
 	else {
 		if ($_COOKIE['clickId']) {
-			$clickId = '"' . mysql_real_escape_string($_COOKIE['clickId']) . '"';
+			$clickId = '"' . mysqli_real_escape_string($mysqli, $_COOKIE['clickId']) . '"';
 			setcookie('clickId', 0, time() - 1000, '/', '.' . DOMAIN);		
 		}
 		else {
