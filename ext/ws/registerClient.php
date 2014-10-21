@@ -15,6 +15,11 @@ else {
 	$userId = userId();
 }
 
+if ($userId >= 991 && $userId <= 996) {
+	setcookie('userId', 0, time() - 1000, '/', '.' . DOMAIN);
+	echo '"not signed in"';
+}
+
 $instanceId = mysqli_real_escape_string($mysqli, $_GET['instanceId']);
 
 // if (!$userId) {
