@@ -22,32 +22,34 @@ if ($userId >= 991 && $userId <= 996) {
 
 $instanceId = mysqli_real_escape_string($mysqli, $_GET['instanceId']);
 
-// if (!$userId) {
-// 	$user = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT id FROM m_users WHERE instance_id = '$instanceId'"));
-// 	if ($user) {
-// 		$userId = intval($user['id']);
-// 	}
-// 	else {
-// 		if ($_COOKIE['clickId']) {
-// 			$clickId = '"' . mysqli_real_escape_string($mysqli, $_COOKIE['clickId']) . '"';
-// 			setcookie('clickId', 0, time() - 1000, '/', '.' . DOMAIN);		
-// 		}
-// 		else {
-// 			$clickId = 'NULL';
-// 		}
+if ($_GET['extVersion'] >= 'chrome-0.4.32') {
+	if (!$userId) {
+		$user = mysqli_fetch_assoc(mysqli_query($mysqli, "SELECT id FROM m_users WHERE instance_id = '$instanceId'"));
+		if ($user) {
+			$userId = intval($user['id']);
+		}
+		else {
+			if ($_COOKIE['clickId']) {
+				$clickId = '"' . mysqli_real_escape_string($mysqli, $_COOKIE['clickId']) . '"';
+				setcookie('clickId', 0, time() - 1000, '/', '.' . DOMAIN);		
+			}
+			else {
+				$clickId = 'NULL';
+			}
 
-// 		$ip = remoteAddr();
-// 		mysqli_query($mysqli, 'INSERT INTO m_users SET 
-// 			created_at = UTC_TIMESTAMP(), 
-// 			ip = "' . $ip . '", user_agent = "' . mysqli_real_escape_string($mysqli, $_SERVER['HTTP_USER_AGENT']) . '",
-// 			instance_id = "' . $instanceId . '",
-// 			click_id = ' . $clickId) or die(mysqli_error($mysqli));
-// 		$userId = mysqli_insert_id($mysqli);
-// 		mysqli_query($mysqli, "INSERT INTO m_belts SET user_id = $userId, creator_id = $userId") or die(mysqli_error($mysqli));
-// 	}
+			$ip = remoteAddr();
+			mysqli_query($mysqli, 'INSERT INTO m_users SET 
+				created_at = UTC_TIMESTAMP(), 
+				ip = "' . $ip . '", user_agent = "' . mysqli_real_escape_string($mysqli, $_SERVER['HTTP_USER_AGENT']) . '",
+				instance_id = "' . $instanceId . '",
+				click_id = ' . $clickId) or die(mysqli_error($mysqli));
+			$userId = mysqli_insert_id($mysqli);
+			mysqli_query($mysqli, "INSERT INTO m_belts SET user_id = $userId, creator_id = $userId") or die(mysqli_error($mysqli));
+		}
 
-// 	$signedIn = true;
-// }
+		$signedIn = true;
+	}
+}
 
 if ($userId != null) {
 	$extVersion = mysqli_real_escape_string($mysqli, $_GET['extVersion']);
