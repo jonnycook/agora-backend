@@ -26,7 +26,7 @@ if ($_GET['extVersion'] >= 'chrome-0.4.32') {
 		else {
 			if ($_COOKIE['clickId']) {
 				$clickId = '"' . mysqli_real_escape_string($mysqli, $_COOKIE['clickId']) . '"';
-				setcookie('clickId', 0, time() - 1000, '/', '.' . DOMAIN);		
+				setcookie('clickId', 0, time() - 3600, '/', '.' . SITE_DOMAIN);		
 			}
 			else {
 				$clickId = 'NULL';
