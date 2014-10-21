@@ -18,6 +18,7 @@ if (!defined('ENV')) {
 	}
 }
 
+
 switch (ENV) {
 	case 'LOCAL_DEV':
 		$mysqli = mysqli_connect('127.0.0.1', 'root', '9wo7bCrA');

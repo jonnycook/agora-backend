@@ -51,7 +51,7 @@ else {
 	function userId() {
 		$userId = $_COOKIE['userId'];
 		if ($userId && !is_numeric($userId)) {
-			return decryptString($_COOKIE['userId'], '$!|i8>-8[5~WAaE');
+			return intval(decryptString($_COOKIE['userId'], '$!|i8>-8[5~WAaE'));
 		}
 	}
 	function setUserId($id) {
