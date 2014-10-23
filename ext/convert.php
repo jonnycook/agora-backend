@@ -10,5 +10,5 @@ if (!$user['converted']) {
 	// curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_exec($ch);
 	mysqli_query($mysqli, "UPDATE m_users SET converted = 1 WHERE id = $userId");
-	mysqli_query($mysqli, "UPDATE sgt_traffic SET converted = 1 WHERE click_id = $user[click_id]");
+	mysqli_query($mysqli, "UPDATE sgt_traffic SET converted = 1, installed = 1 WHERE click_id = $user[click_id]");
 }
