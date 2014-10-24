@@ -101,6 +101,15 @@ function onInsert($table, $id) {
 			notification($commentRecord['creator_id'], 'newFeedbackItemReply', $id, $record);
 		}
 	}
+	// else if ($table == 'list_elements') {
+	// 	$record = $db->storage->getRecord($table, $id);
+
+	// 	if ($record['element_type'] == 'Product') {
+	// 		$list = $db->storage->getRecord('lists', $record['list_id']);
+	// 		$product = $db->storage->getRecord('products', $record['element_id']);
+			
+	// 	}
+	// }
 }
 
 require_once('header.php');
