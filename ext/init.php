@@ -117,6 +117,7 @@ function modelNameToTableName($type) {
 	switch ($type) {
 		case 'Product': return 'products';
 		case 'ProductVariant': return 'product_variants';
+		case 'Video': return 'videos';
 		case 'Decision': return 'decisions';
 		case 'Composite': return 'composites';
 		case 'Belt': return 'belts';
