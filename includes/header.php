@@ -67,7 +67,7 @@ switch (ENV) {
 		$mysqli = mysqli_connect('50.116.31.117', 'root', 'ghijkk56k')  or die(mysqli_error($mysqli));
 		mysqli_select_db($mysqli, 'agora');
 		define('SHARED_PATH', '/var/www/shared/');
-		define('USE_RIAK', true);
+		define('USE_RIAK', false);
 		define('RIAK_HOST', '50.116.31.117');
 		define('MONGO_DB', 'agora_prod');
 		define('SITE_DOMAIN', 'agora.sh');
